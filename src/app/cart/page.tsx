@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import { useCart } from '@/contexts/CartContext';
 import { Trash2, CreditCard, Download, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { MpesaPaymentRequest, MpesaPaymentResponse, MpesaTransactionStatusResponse } from '@/types';
+import { trackInitiateCheckout, trackPurchase } from '@/lib/analytics';
 
 export default function CartPage() {
   const { state, removeItem, clearCart } = useCart();
@@ -54,6 +55,11 @@ export default function CartPage() {
         // Payment confirmed
         setPaymentStatus('success');
         setPaymentMessage(`Payment confirmed! Receipt: ${result.mpesa_receipt_number || 'N/A'}`);
+        
+        // Track purchase event
+        const orderId = result.transaction_id || `order_${Date.now()}`;
+        await trackPurchase(state.items, state.total, orderId, phoneNumber);
+        
         clearCart();
         
         // Clear any ongoing polling
@@ -143,6 +149,9 @@ export default function CartPage() {
       setPaymentStatus('error');
       return;
     }
+
+    // Track initiate checkout event
+    await trackInitiateCheckout(state.items, state.total, phoneNumber);
 
     setIsProcessing(true);
     setPaymentStatus('idle');
