@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import Header from '@/components/Header';
-import { Download, CheckCircle, ArrowLeft, Mail, Send } from 'lucide-react';
+import { Download, CheckCircle, ArrowLeft, Mail, Send, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getProductById } from '@/lib/products';
@@ -14,13 +14,109 @@ function SuccessContent() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // In a real app, you would get the purchased products from the order
-    // For now, we'll show all products as an example
-    const productIds = searchParams.get('products')?.split(',') || [];
-    const products = productIds.map(id => getProductById(id)).filter(Boolean) as Product[];
-    setPurchasedProducts(products);
+    // Check payment verification
+    const checkPaymentVerification = () => {
+      try {
+        // Helper function to get cookie value
+        const getCookie = (name: string) => {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return decodeURIComponent(parts.pop()?.split(';').shift() || '');
+          return null;
+        };
+
+        // Try localStorage first, then cookie
+        let storedVerification = localStorage.getItem('paymentVerification');
+        let verificationSource = 'localStorage';
+        
+        if (!storedVerification) {
+          // Try cookie if localStorage is empty
+          storedVerification = getCookie('paymentVerification');
+          verificationSource = 'cookie';
+        }
+
+        console.log('Verification check:', { storedVerification, verificationSource });
+
+        if (!storedVerification) {
+          // No payment verification found - redirect to home
+          console.log('No verification found - redirecting to home');
+          window.location.href = '/';
+          return;
+        }
+
+        const verification = JSON.parse(storedVerification);
+        const currentTime = Date.now();
+        const timeDiff = currentTime - verification.timestamp;
+        
+        console.log('Verification data:', verification);
+        console.log('Time difference (hours):', timeDiff / (1000 * 60 * 60));
+        
+        // Check if verification is within last 7 days (604800000 ms) since we're using cookies
+        if (timeDiff > 604800000) {
+          // Verification expired - redirect to home
+          console.log('Verification expired - redirecting to home');
+          localStorage.removeItem('paymentVerification');
+          // Clear cookie too
+          document.cookie = 'paymentVerification=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          window.location.href = '/';
+          return;
+        }
+
+        // Check if product IDs match
+        const urlProductIds = searchParams.get('products')?.split(',').filter(Boolean) || [];
+        const verifiedProductIds = verification.productIds || [];
+        
+        console.log('Product ID comparison:', { urlProductIds, verifiedProductIds });
+        
+        if (urlProductIds.length === 0 || verifiedProductIds.length === 0) {
+          // No products in URL or verification - redirect to home
+          console.log('No products found - redirecting to home');
+          localStorage.removeItem('paymentVerification');
+          document.cookie = 'paymentVerification=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          window.location.href = '/';
+          return;
+        }
+
+        // Check if at least one product ID matches
+        const hasMatchingProduct = urlProductIds.some(id => verifiedProductIds.includes(id));
+        console.log('Product match result:', hasMatchingProduct);
+        
+        if (!hasMatchingProduct) {
+          // Product IDs don't match - redirect to home
+          console.log('Product IDs don\'t match - redirecting to home');
+          localStorage.removeItem('paymentVerification');
+          document.cookie = 'paymentVerification=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          window.location.href = '/';
+          return;
+        }
+
+        // Verification successful - load products
+        const products = urlProductIds.map(id => getProductById(id)).filter(Boolean) as Product[];
+        setPurchasedProducts(products);
+        setIsAuthorized(true);
+        setIsLoading(false);
+        
+        console.log('Verification successful - access granted');
+        
+        // Don't clear verification - let it persist for the full 7 days
+        // This allows users to return to the success page multiple times
+        
+      } catch (error) {
+        console.error('Error checking payment verification:', error);
+        // Error occurred - redirect to home
+        localStorage.removeItem('paymentVerification');
+        window.location.href = '/';
+      }
+    };
+
+    checkPaymentVerification();
+
+    // Don't clear verification automatically - let it persist for 7 days
+    // Users can return to the success page multiple times during this period
   }, [searchParams]);
 
   const sendOrderToMakeWebhook = async (email: string) => {
@@ -105,6 +201,53 @@ function SuccessContent() {
       alert('Failed to submit email. Please try again.');
     }
   };
+
+  // Show loading state while checking authorization
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <div className="flex items-center justify-center space-x-2">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#6528F7]"></div>
+              <span className="text-gray-600">Verifying your purchase...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show unauthorized state (this should redirect automatically, but just in case)
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <div className="mb-8">
+              <div className="bg-red-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <XCircle className="h-12 w-12 text-red-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Access Denied
+              </h1>
+              <p className="text-lg text-gray-600 mb-6">
+                This page is only accessible after a successful payment.
+              </p>
+              <Link
+                href="/"
+                className="bg-[#6528F7] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5a1fd8] transition-colors duration-200"
+              >
+                Return to Home
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

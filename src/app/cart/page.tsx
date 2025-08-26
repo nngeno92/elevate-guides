@@ -6,6 +6,7 @@ import { useCart } from '@/contexts/CartContext';
 import { Trash2, CreditCard, Download, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { MpesaPaymentRequest, MpesaPaymentResponse, MpesaTransactionStatusResponse } from '@/types';
 import { trackInitiateCheckout, trackPurchase } from '@/lib/analytics';
+import PaymentSuccessModal from '@/components/PaymentSuccessModal';
 
 export default function CartPage() {
   const { state, removeItem, clearCart } = useCart();
@@ -14,6 +15,8 @@ export default function CartPage() {
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
   const [paymentMessage, setPaymentMessage] = useState('');
   const [checkoutRequestId, setCheckoutRequestId] = useState<string>('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [receiptNumber, setReceiptNumber] = useState('');
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -31,6 +34,9 @@ export default function CartPage() {
       });
 
       const result: MpesaTransactionStatusResponse = await response.json();
+
+      // Debug logging to see what we're getting
+      console.log('Payment status check result:', result);
 
       if (!result.success) {
         // API error
@@ -54,13 +60,11 @@ export default function CartPage() {
       if (result.is_completed && result.is_successful) {
         // Payment confirmed
         setPaymentStatus('success');
-        setPaymentMessage(`Payment confirmed! Receipt: ${result.mpesa_receipt_number || 'N/A'}`);
+        setReceiptNumber(result.mpesa_receipt_number || 'N/A');
         
         // Track purchase event
         const orderId = result.transaction_id || `order_${Date.now()}`;
         await trackPurchase(state.items, state.total, orderId, phoneNumber);
-        
-        clearCart();
         
         // Clear any ongoing polling
         if (pollingIntervalRef.current) {
@@ -72,11 +76,32 @@ export default function CartPage() {
           timeoutRef.current = null;
         }
 
-        // Redirect to success page after a short delay
+        // Store payment verification data in both localStorage and cookie
+        const paymentVerification = {
+          timestamp: Date.now(),
+          receiptNumber: result.mpesa_receipt_number || 'N/A',
+          productIds: state.items.map(item => item.product_id),
+          orderId: result.transaction_id || `order_${Date.now()}`
+        };
+        
+        // Store in localStorage for immediate access
+        localStorage.setItem('paymentVerification', JSON.stringify(paymentVerification));
+        
+        // Store in cookie for persistence (7 days)
+        const cookieValue = JSON.stringify(paymentVerification);
+        const expires = new Date();
+        expires.setDate(expires.getDate() + 7); // 7 days from now
+        document.cookie = `paymentVerification=${encodeURIComponent(cookieValue)}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+        
+        // Show success modal
+        setShowSuccessModal(true);
+        
+        // Clear cart and redirect after modal animation
         setTimeout(() => {
+          clearCart();
           const productIds = state.items.map(item => item.product_id).join(',');
           window.location.href = `/success?products=${productIds}`;
-        }, 2000);
+        }, 3000);
         
         return true;
       } else if (result.is_completed && !result.is_successful) {
@@ -84,6 +109,64 @@ export default function CartPage() {
         setPaymentStatus('error');
         const errorMessage = result.result_description || 'Payment failed. Please try again.';
         setPaymentMessage(errorMessage === 'Request Cancelled by user.' ? 'Transaction Cancelled' : errorMessage);
+        setIsProcessing(false);
+        
+        // Clear polling
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        
+        return true;
+      } else if (result.success && result.status && ['FAILED', 'CANCELLED', 'TIMEOUT'].includes(result.status)) {
+        // Payment failed based on status (even if not marked as completed)
+        setPaymentStatus('error');
+        let errorMessage = 'Payment failed. Please try again.';
+        
+        if (result.status === 'CANCELLED') {
+          errorMessage = 'Transaction Cancelled';
+        } else if (result.status === 'FAILED') {
+          errorMessage = result.result_description || 'Payment failed. Please try again.';
+        } else if (result.status === 'TIMEOUT') {
+          errorMessage = 'Payment timeout. Please try again.';
+        }
+        
+        setPaymentMessage(errorMessage);
+        setIsProcessing(false);
+        
+        // Clear polling
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        
+        return true;
+      } else if (result.success && result.result_description && 
+                 (result.result_description.toLowerCase().includes('cancelled') || 
+                  result.result_description.toLowerCase().includes('insufficient') ||
+                  result.result_description.toLowerCase().includes('failed') ||
+                  result.result_description.toLowerCase().includes('declined'))) {
+        // Payment failed based on error description (even if status is still PENDING)
+        setPaymentStatus('error');
+        let errorMessage = 'Payment failed. Please try again.';
+        
+        if (result.result_description.toLowerCase().includes('cancelled')) {
+          errorMessage = 'Transaction Cancelled';
+        } else if (result.result_description.toLowerCase().includes('insufficient')) {
+          errorMessage = 'Insufficient balance. Please check your MPESA balance and try again.';
+        } else {
+          errorMessage = result.result_description;
+        }
+        
+        setPaymentMessage(errorMessage);
         setIsProcessing(false);
         
         // Clear polling
@@ -110,7 +193,7 @@ export default function CartPage() {
   const startPaymentPolling = (checkoutRequestId: string) => {
     // Wait 10 seconds before starting to poll (give user time to enter MPESA PIN)
     setTimeout(() => {
-      // Start polling every 3 seconds
+      // Start polling every 2 seconds (more frequent to catch failures faster)
       pollingIntervalRef.current = setInterval(async () => {
         const isComplete = await checkPaymentStatus(checkoutRequestId);
         if (isComplete) {
@@ -120,7 +203,7 @@ export default function CartPage() {
             pollingIntervalRef.current = null;
           }
         }
-      }, 3000);
+      }, 2000);
 
       // Set timeout for 1 minute (60 seconds)
       timeoutRef.current = setTimeout(() => {
@@ -303,14 +386,7 @@ export default function CartPage() {
                     />
                   </div>
                   
-                  {paymentStatus === 'success' && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <div className="flex items-center">
-                        <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-                        <p className="text-green-800">{paymentMessage}</p>
-                      </div>
-                    </div>
-                  )}
+
                   
                   {paymentStatus === 'processing' && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -361,6 +437,13 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+      
+      {/* Payment Success Modal */}
+      <PaymentSuccessModal
+        isOpen={showSuccessModal}
+        receiptNumber={receiptNumber}
+        onClose={() => setShowSuccessModal(false)}
+      />
     </div>
   );
 } 
