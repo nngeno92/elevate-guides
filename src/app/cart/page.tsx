@@ -19,6 +19,7 @@ export default function CartPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [receiptNumber, setReceiptNumber] = useState('');
   const [orderNumber, setOrderNumber] = useState<string>('');
+  const orderNumberRef = useRef<string>('');
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -69,13 +70,16 @@ export default function CartPage() {
         await trackPurchase(state.items, state.total, orderId, phoneNumber);
         
         // Create order in backend using the stored order number
-        console.log('Using stored order number:', orderNumber);
+        const currentOrderNumber = orderNumberRef.current || orderNumber;
+        console.log('🔢 Using order number for backend:', currentOrderNumber);
+        console.log('🔢 Order number ref value:', orderNumberRef.current);
+        console.log('🔢 Order number state value:', orderNumber);
         
         const orderData = {
           phone_number: phoneNumber.startsWith('0') ? `254${phoneNumber.slice(1)}` : phoneNumber,
           products: state.items.map(item => item.product_name).join(', '),
           date_time: new Date().toISOString(),
-          order_id: orderNumber,
+          order_id: currentOrderNumber,
           source: 'bizz.ke'
         };
         
@@ -115,7 +119,7 @@ export default function CartPage() {
           timestamp: Date.now(),
           receiptNumber: result.mpesa_receipt_number || 'N/A',
           productIds: state.items.map(item => item.product_id),
-          orderId: orderNumber,
+          orderId: currentOrderNumber,
           transactionId: orderId // Keep transaction ID for reference
         };
         
@@ -140,7 +144,7 @@ export default function CartPage() {
           const productIds = state.items.map(item => item.product_id).join(',');
           console.log('🚀 Redirecting to success page...');
           window.location.href = `/success?products=${productIds}`;
-        }, 5000); // Increased from 3000 to 5000 to see logs
+        }, 60000); // Increased from 3000 to 5000 to see logs
         
         return true;
       } else if (result.is_completed && !result.is_successful) {
@@ -282,6 +286,9 @@ export default function CartPage() {
     try {
       const generatedOrderNumber = `ORDER${Date.now()}`;
       setOrderNumber(generatedOrderNumber);
+      orderNumberRef.current = generatedOrderNumber; // Store in ref for immediate access
+      
+      console.log('🔢 Generated order number:', generatedOrderNumber);
       
       const paymentRequest: MpesaPaymentRequest = {
         phone_number: phoneNumber.startsWith('0') ? `254${phoneNumber.slice(1)}` : phoneNumber,
