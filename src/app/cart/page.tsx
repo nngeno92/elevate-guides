@@ -84,6 +84,15 @@ export default function CartPage() {
         const orderResult = await createOrder(orderData);
         console.log('Order creation result:', orderResult);
         
+        // Store logs in localStorage for debugging after navigation
+        const debugLogs = {
+          timestamp: new Date().toISOString(),
+          orderData: orderData,
+          orderResult: orderResult,
+          success: orderResult.success
+        };
+        localStorage.setItem('orderCreationLogs', JSON.stringify(debugLogs));
+        
         if (orderResult.success) {
           console.log('✅ Order created successfully:', orderResult.order);
         } else {
@@ -122,12 +131,16 @@ export default function CartPage() {
         // Show success modal
         setShowSuccessModal(true);
         
-        // Clear cart and redirect after modal animation
+        // Add delay to see logs before redirect
+        console.log('⏳ Waiting 5 seconds before redirect to see logs...');
+        
+        // Clear cart and redirect after modal animation and debug delay
         setTimeout(() => {
           clearCart();
           const productIds = state.items.map(item => item.product_id).join(',');
+          console.log('🚀 Redirecting to success page...');
           window.location.href = `/success?products=${productIds}`;
-        }, 3000);
+        }, 5000); // Increased from 3000 to 5000 to see logs
         
         return true;
       } else if (result.is_completed && !result.is_successful) {

@@ -17,6 +17,7 @@ function SuccessContent() {
   const [emailSubmitted, setEmailSubmitted] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [debugLogs, setDebugLogs] = useState<any>(null);
   
   useEffect(() => {
     // Check payment verification
@@ -115,6 +116,18 @@ function SuccessContent() {
     };
 
     checkPaymentVerification();
+
+    // Retrieve debug logs for order creation
+    const storedLogs = localStorage.getItem('orderCreationLogs');
+    if (storedLogs) {
+      try {
+        const logs = JSON.parse(storedLogs);
+        setDebugLogs(logs);
+        console.log('📋 Retrieved order creation logs:', logs);
+      } catch (error) {
+        console.error('Error parsing debug logs:', error);
+      }
+    }
 
     // Don't clear verification automatically - let it persist for 7 days
     // Users can return to the success page multiple times during this period
@@ -499,6 +512,46 @@ function SuccessContent() {
               </div>
             </div>
           </div>
+          
+          {/* Debug Section - Only show in development */}
+          {debugLogs && process.env.NODE_ENV === 'development' && (
+            <div className="mt-8 border-t pt-6">
+              <details className="bg-gray-50 rounded-lg p-4">
+                <summary className="cursor-pointer font-semibold text-gray-700 mb-2">
+                  🔍 Debug: Order Creation Logs
+                </summary>
+                <div className="text-left text-sm">
+                  <div className="mb-2">
+                    <strong>Timestamp:</strong> {debugLogs.timestamp}
+                  </div>
+                  <div className="mb-2">
+                    <strong>Success:</strong> {debugLogs.success ? '✅ Yes' : '❌ No'}
+                  </div>
+                  <div className="mb-2">
+                    <strong>Order Data:</strong>
+                    <pre className="bg-white p-2 rounded border text-xs overflow-x-auto">
+                      {JSON.stringify(debugLogs.orderData, null, 2)}
+                    </pre>
+                  </div>
+                  <div className="mb-2">
+                    <strong>Order Result:</strong>
+                    <pre className="bg-white p-2 rounded border text-xs overflow-x-auto">
+                      {JSON.stringify(debugLogs.orderResult, null, 2)}
+                    </pre>
+                  </div>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem('orderCreationLogs');
+                      setDebugLogs(null);
+                    }}
+                    className="text-red-600 text-xs hover:text-red-800"
+                  >
+                    Clear Debug Logs
+                  </button>
+                </div>
+              </details>
+            </div>
+          )}
         </div>
       </div>
     </div>
