@@ -144,7 +144,7 @@ export default function CartPage() {
           const productIds = state.items.map(item => item.product_id).join(',');
           console.log('🚀 Redirecting to success page...');
           window.location.href = `/success?products=${productIds}`;
-        }, 60000); // Increased from 3000 to 5000 to see logs
+        }, 5000); 
         
         return true;
       } else if (result.is_completed && !result.is_successful) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import Header from '@/components/Header';
-import { Download, CheckCircle, ArrowLeft, Mail, Send, XCircle } from 'lucide-react';
+import { Download, CheckCircle, ArrowLeft, Mail, Send, XCircle, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getProductById } from '@/lib/products';
@@ -379,7 +379,7 @@ function SuccessContent() {
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">🎉 Bonus Gift: Mobile App Access!</h3>
                   <p className="text-gray-700 mb-4">
-                    As a special thank you for your purchase, we&apos;re giving you exclusive access to our Business in Kenya Mobile App!
+                    As a special thank you for your purchase, we&apos;re giving you exclusive access to our Business in Kenya Mobile App! You&apos;ll use your email address to log into the app.
                   </p>
                 </div>
                 
@@ -404,7 +404,22 @@ function SuccessContent() {
                   </p>
                 </div>
                 
-                <div className="text-center">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <h4 className="font-semibold text-green-900 mb-2">🔑 Login Information:</h4>
+                  <p className="text-green-800 text-sm leading-relaxed">
+                    Use the email address you provide below to log into the mobile app. Make sure to use the same email for both resource delivery and app access.
+                  </p>
+                </div>
+                
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                  <h4 className="font-semibold text-orange-900 mb-2">📱 Device Compatibility:</h4>
+                  <div className="text-orange-800 text-sm leading-relaxed space-y-2">
+                    <p><strong>Android Users:</strong> Download and install the APK file below.</p>
+                    <p><strong>iPhone Users:</strong> Access the same content via our web app at <a href="https://app.bizz.ke" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline font-medium">https://app.bizz.ke</a></p>
+                  </div>
+                </div>
+                
+                <div className="text-center space-y-3">
                   <a
                     href="https://drive.google.com/file/d/1YGs7DjBUEM7junRn6Rpf2e5Ag31PKocV/view?usp=sharing"
                     target="_blank"
@@ -412,7 +427,19 @@ function SuccessContent() {
                     className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     <Download className="h-5 w-5" />
-                    <span>Download Mobile App</span>
+                    <span>Download Android App</span>
+                  </a>
+                  
+                  <div className="text-sm text-gray-600">or</div>
+                  
+                  <a
+                    href="https://app.bizz.ke"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    <ExternalLink className="h-5 w-5" />
+                    <span>Access Web App (iPhone/All Devices)</span>
                   </a>
                 </div>
               </div>
@@ -425,10 +452,10 @@ function SuccessContent() {
                   <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
                     <Mail className="h-8 w-8 text-green-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">📧 Get Resources via Email</h3>
-                  <p className="text-gray-700 mb-4">
-                    You can also provide your email for these resources to be shared directly to your inbox.
-                  </p>
+                               <h3 className="text-xl font-bold text-gray-900 mb-2">📧 Get Resources via Email</h3>
+             <p className="text-gray-700 mb-4">
+               Provide your email to receive resources directly to your inbox. <strong>This same email will also be used to log into your bonus mobile app!</strong>
+             </p>
                 </div>
                 
                 {!emailSubmitted ? (
