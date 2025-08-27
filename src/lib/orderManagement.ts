@@ -54,6 +54,9 @@ export interface UpdateOrderResponse {
 
 export const createOrder = async (orderData: CreateOrderRequest): Promise<CreateOrderResponse> => {
   try {
+    console.log('🚀 Creating order with data:', orderData);
+    console.log('📡 Making request to:', `${BASE_URL}/orders/create/`);
+    
     const response = await fetch(`${BASE_URL}/orders/create/`, {
       method: 'POST',
       headers: {
@@ -62,19 +65,35 @@ export const createOrder = async (orderData: CreateOrderRequest): Promise<Create
       body: JSON.stringify(orderData),
     });
 
+    console.log('📥 Response status:', response.status);
+    console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+
     const result = await response.json();
+    console.log('📥 Response body:', result);
+    
+    if (!response.ok) {
+      console.error('❌ HTTP error:', response.status, response.statusText);
+      return {
+        success: false,
+        error: `HTTP ${response.status}: ${result.error || response.statusText}`,
+      };
+    }
+
     return result;
   } catch (error) {
-    console.error('Error creating order:', error);
+    console.error('❌ Network error creating order:', error);
     return {
       success: false,
-      error: 'Failed to create order. Please try again.',
+      error: `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
 };
 
 export const updateOrderEmail = async (orderData: UpdateOrderRequest): Promise<UpdateOrderResponse> => {
   try {
+    console.log('📧 Updating order email with data:', orderData);
+    console.log('📡 Making request to:', `${BASE_URL}/orders/update/`);
+    
     const response = await fetch(`${BASE_URL}/orders/update/`, {
       method: 'PUT',
       headers: {
@@ -83,13 +102,26 @@ export const updateOrderEmail = async (orderData: UpdateOrderRequest): Promise<U
       body: JSON.stringify(orderData),
     });
 
+    console.log('📥 Response status:', response.status);
+    console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+
     const result = await response.json();
+    console.log('📥 Response body:', result);
+    
+    if (!response.ok) {
+      console.error('❌ HTTP error:', response.status, response.statusText);
+      return {
+        success: false,
+        error: `HTTP ${response.status}: ${result.error || response.statusText}`,
+      };
+    }
+
     return result;
   } catch (error) {
-    console.error('Error updating order email:', error);
+    console.error('❌ Network error updating order email:', error);
     return {
       success: false,
-      error: 'Failed to update order email. Please try again.',
+      error: `Network error: ${error instanceof Error ? error.message : 'Unknown error'}`,
     };
   }
 }; 

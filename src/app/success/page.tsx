@@ -200,30 +200,43 @@ function SuccessContent() {
     // Update order in backend
     let orderUpdateSuccess = false;
     try {
+      console.log('🔍 Looking for verification data...');
+      
       // Get order ID from verification data
       const storedVerification = localStorage.getItem('paymentVerification') || 
                                  document.cookie.split('; ').find(row => row.startsWith('paymentVerification='))?.split('=')[1];
       
+      console.log('📋 Stored verification data:', storedVerification);
+      
       if (storedVerification) {
         const verification = JSON.parse(decodeURIComponent(storedVerification));
+        console.log('🔍 Parsed verification data:', verification);
+        
         const orderId = verification.orderId;
+        console.log('🆔 Order ID found:', orderId);
         
         if (orderId) {
+          console.log('📧 Updating order email for order:', orderId);
+          
           const orderUpdateResult = await updateOrderEmail({
             order_id: orderId,
             email: email
           });
           
           if (orderUpdateResult.success) {
-            console.log('Order email updated successfully:', orderUpdateResult.order);
+            console.log('✅ Order email updated successfully:', orderUpdateResult.order);
             orderUpdateSuccess = true;
           } else {
-            console.error('Failed to update order email:', orderUpdateResult.error);
+            console.error('❌ Failed to update order email:', orderUpdateResult.error);
           }
+        } else {
+          console.error('❌ No order ID found in verification data');
         }
+      } else {
+        console.error('❌ No verification data found');
       }
     } catch (error) {
-      console.error('Error updating order email:', error);
+      console.error('❌ Error updating order email:', error);
     }
     
     setIsSubmitting(false);

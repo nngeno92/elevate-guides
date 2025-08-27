@@ -18,6 +18,7 @@ export default function CartPage() {
   const [checkoutRequestId, setCheckoutRequestId] = useState<string>('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [receiptNumber, setReceiptNumber] = useState('');
+  const [orderNumber, setOrderNumber] = useState<string>('');
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -67,20 +68,27 @@ export default function CartPage() {
         const orderId = result.transaction_id || `order_${Date.now()}`;
         await trackPurchase(state.items, state.total, orderId, phoneNumber);
         
-        // Create order in backend
+        // Create order in backend using the stored order number
+        console.log('Using stored order number:', orderNumber);
+        
         const orderData = {
           phone_number: phoneNumber.startsWith('0') ? `254${phoneNumber.slice(1)}` : phoneNumber,
           products: state.items.map(item => item.product_name).join(', '),
           date_time: new Date().toISOString(),
-          order_id: orderId,
+          order_id: orderNumber,
           source: 'bizz.ke'
         };
         
+        console.log('Creating order with data:', orderData);
+        
         const orderResult = await createOrder(orderData);
+        console.log('Order creation result:', orderResult);
+        
         if (orderResult.success) {
-          console.log('Order created successfully:', orderResult.order);
+          console.log('✅ Order created successfully:', orderResult.order);
         } else {
-          console.error('Failed to create order:', orderResult.error);
+          console.error('❌ Failed to create order:', orderResult.error);
+          console.error('Order data that failed:', orderData);
         }
         
         // Clear any ongoing polling
@@ -98,7 +106,8 @@ export default function CartPage() {
           timestamp: Date.now(),
           receiptNumber: result.mpesa_receipt_number || 'N/A',
           productIds: state.items.map(item => item.product_id),
-          orderId: orderId
+          orderId: orderNumber,
+          transactionId: orderId // Keep transaction ID for reference
         };
         
         // Store in localStorage for immediate access
@@ -258,10 +267,13 @@ export default function CartPage() {
     setPaymentMessage('');
 
     try {
+      const generatedOrderNumber = `ORDER${Date.now()}`;
+      setOrderNumber(generatedOrderNumber);
+      
       const paymentRequest: MpesaPaymentRequest = {
         phone_number: phoneNumber.startsWith('0') ? `254${phoneNumber.slice(1)}` : phoneNumber,
         amount: state.total,
-        account_reference: `ORDER${Date.now()}`,
+        account_reference: generatedOrderNumber,
         transaction_desc: `Payment for ${state.items.length} business guide(s)`
       };
 
