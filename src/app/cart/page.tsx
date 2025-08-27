@@ -7,6 +7,7 @@ import { Trash2, CreditCard, Download, Loader2, CheckCircle, XCircle } from 'luc
 import { MpesaPaymentRequest, MpesaPaymentResponse, MpesaTransactionStatusResponse } from '@/types';
 import { trackInitiateCheckout, trackPurchase } from '@/lib/analytics';
 import PaymentSuccessModal from '@/components/PaymentSuccessModal';
+import { createOrder } from '@/lib/orderManagement';
 
 export default function CartPage() {
   const { state, removeItem, clearCart } = useCart();
@@ -66,6 +67,22 @@ export default function CartPage() {
         const orderId = result.transaction_id || `order_${Date.now()}`;
         await trackPurchase(state.items, state.total, orderId, phoneNumber);
         
+        // Create order in backend
+        const orderData = {
+          phone_number: phoneNumber.startsWith('0') ? `254${phoneNumber.slice(1)}` : phoneNumber,
+          products: state.items.map(item => item.product_name).join(', '),
+          date_time: new Date().toISOString(),
+          order_id: orderId,
+          source: 'bizz.ke'
+        };
+        
+        const orderResult = await createOrder(orderData);
+        if (orderResult.success) {
+          console.log('Order created successfully:', orderResult.order);
+        } else {
+          console.error('Failed to create order:', orderResult.error);
+        }
+        
         // Clear any ongoing polling
         if (pollingIntervalRef.current) {
           clearInterval(pollingIntervalRef.current);
@@ -81,7 +98,7 @@ export default function CartPage() {
           timestamp: Date.now(),
           receiptNumber: result.mpesa_receipt_number || 'N/A',
           productIds: state.items.map(item => item.product_id),
-          orderId: result.transaction_id || `order_${Date.now()}`
+          orderId: orderId
         };
         
         // Store in localStorage for immediate access

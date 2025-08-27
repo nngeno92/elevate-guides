@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getProductById } from '@/lib/products';
 import { Product } from '@/types';
+import { updateOrderEmail } from '@/lib/orderManagement';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -192,10 +193,42 @@ function SuccessContent() {
     }
 
     setIsSubmitting(true);
-    const success = await sendOrderToMakeWebhook(email);
+    
+    // Send to make.com webhook
+    const webhookSuccess = await sendOrderToMakeWebhook(email);
+    
+    // Update order in backend
+    let orderUpdateSuccess = false;
+    try {
+      // Get order ID from verification data
+      const storedVerification = localStorage.getItem('paymentVerification') || 
+                                 document.cookie.split('; ').find(row => row.startsWith('paymentVerification='))?.split('=')[1];
+      
+      if (storedVerification) {
+        const verification = JSON.parse(decodeURIComponent(storedVerification));
+        const orderId = verification.orderId;
+        
+        if (orderId) {
+          const orderUpdateResult = await updateOrderEmail({
+            order_id: orderId,
+            email: email
+          });
+          
+          if (orderUpdateResult.success) {
+            console.log('Order email updated successfully:', orderUpdateResult.order);
+            orderUpdateSuccess = true;
+          } else {
+            console.error('Failed to update order email:', orderUpdateResult.error);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error updating order email:', error);
+    }
+    
     setIsSubmitting(false);
 
-    if (success) {
+    if (webhookSuccess || orderUpdateSuccess) {
       setEmailSubmitted(true);
     } else {
       alert('Failed to submit email. Please try again.');
