@@ -421,13 +421,13 @@ function SuccessContent() {
                 
                 <div className="text-center space-y-3">
                   <a
-                    href="https://drive.google.com/file/d/1YGs7DjBUEM7junRn6Rpf2e5Ag31PKocV/view?usp=sharing"
+                    href="https://drive.google.com/file/d/1FQFxgNLaowq20pQt9kiSJc7cj3o4F090/view?usp=sharing"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     <Download className="h-5 w-5" />
-                    <span>Download Android App</span>
+                    <span>Download The Android App</span>
                   </a>
                   
                   <div className="text-sm text-gray-600">or</div>
