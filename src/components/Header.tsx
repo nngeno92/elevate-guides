@@ -37,16 +37,34 @@ export default function Header() {
               Home
             </Link>
             <Link 
+              href="/about" 
+              className="text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
+            >
+              About
+            </Link>
+            <Link 
               href="/products" 
               className="text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
             >
               Products
             </Link>
             <Link 
-              href="/about" 
+              href="/services" 
               className="text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
             >
-              About
+              Services
+            </Link>
+            <Link 
+              href="/blog" 
+              className="text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
+            >
+              Blog
+            </Link>
+            <Link 
+              href="/contact" 
+              className="text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
+            >
+              Contact
             </Link>
           </nav>
 
@@ -87,6 +105,13 @@ export default function Header() {
                 Home
               </Link>
               <Link 
+                href="/about" 
+                className="block px-3 py-2 text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link 
                 href="/products" 
                 className="block px-3 py-2 text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -94,11 +119,25 @@ export default function Header() {
                 Products
               </Link>
               <Link 
-                href="/about" 
+                href="/services" 
                 className="block px-3 py-2 text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                About
+                Services
+              </Link>
+              <Link 
+                href="/blog" 
+                className="block px-3 py-2 text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
+              <Link 
+                href="/contact" 
+                className="block px-3 py-2 text-gray-700 hover:text-[#6528F7] transition-colors duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact
               </Link>
             </div>
           </div>

@@ -2,63 +2,63 @@ import Image from 'next/image';
 
 export default function BonusResources() {
   return (
-    <div className="bg-gradient-to-br from-orange-50 via-yellow-50 to-red-50 border-2 border-orange-200 rounded-2xl p-8 mb-12 relative overflow-hidden">
+    <div className="bg-gradient-to-br from-orange-50 via-yellow-50 to-red-50 border-2 border-orange-200 rounded-xl p-6 mb-8 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-4 right-4 text-6xl">🎁</div>
-        <div className="absolute bottom-4 left-4 text-4xl">🔥</div>
-        <div className="absolute top-1/2 left-1/4 text-3xl">💡</div>
+        <div className="absolute top-4 right-4 text-4xl">🎁</div>
+        <div className="absolute bottom-4 left-4 text-3xl">🔥</div>
+        <div className="absolute top-1/2 left-1/4 text-2xl">💡</div>
       </div>
       
       <div className="relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
+        <div className="grid lg:grid-cols-2 gap-6 items-center">
           {/* Content */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="text-center lg:text-left">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
                 🎁 Bonus Resources Included
               </h2>
-              <p className="text-lg text-gray-700 mb-6">
+              <p className="text-base text-gray-700 mb-4">
                 Buy today and also get our Business in Kenya Mobile App with exclusive access to:
               </p>
             </div>
             
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <span className="text-2xl">🧠</span>
+            <div className="space-y-3">
+              <div className="flex items-start space-x-2">
+                <span className="text-xl">🧠</span>
                 <div>
-                  <h3 className="font-semibold text-gray-900">In-depth Analysis</h3>
-                  <p className="text-gray-700">100+ Business Ideas in Kenya</p>
+                  <h3 className="font-semibold text-gray-900 text-sm">In-depth Analysis</h3>
+                  <p className="text-gray-700 text-xs">100+ Business Ideas in Kenya</p>
                 </div>
               </div>
               
-              <div className="flex items-start space-x-3">
-                <span className="text-2xl">💡</span>
+              <div className="flex items-start space-x-2">
+                <span className="text-xl">💡</span>
                 <div>
-                  <h3 className="font-semibold text-gray-900">General Business Tips</h3>
-                  <p className="text-gray-700">To Be Profitable</p>
+                  <h3 className="font-semibold text-gray-900 text-sm">General Business Tips</h3>
+                  <p className="text-gray-700 text-xs">To Be Profitable</p>
                 </div>
               </div>
               
-              <div className="flex items-start space-x-3">
-                <span className="text-2xl">📲</span>
+              <div className="flex items-start space-x-2">
+                <span className="text-xl">📲</span>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Daily Digital Marketing Tips</h3>
-                  <p className="text-gray-700">Stay ahead of the competition</p>
+                  <h3 className="font-semibold text-gray-900 text-sm">Daily Digital Marketing Tips</h3>
+                  <p className="text-gray-700 text-xs">Stay ahead of the competition</p>
                 </div>
               </div>
               
-              <div className="flex items-start space-x-3">
-                <span className="text-2xl">🧮</span>
+              <div className="flex items-start space-x-2">
+                <span className="text-xl">🧮</span>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Business Tools</h3>
-                  <p className="text-gray-700">Tax, Loan & Profit Calculators</p>
+                  <h3 className="font-semibold text-gray-900 text-sm">Business Tools</h3>
+                  <p className="text-gray-700 text-xs">Tax, Loan & Profit Calculators</p>
                 </div>
               </div>
             </div>
             
-            <div className="bg-red-100 border border-red-300 rounded-lg p-4 text-center">
-              <p className="text-red-800 font-semibold text-lg">
+            <div className="bg-red-100 border border-red-300 rounded-lg p-3 text-center">
+              <p className="text-red-800 font-semibold text-sm">
                 🔥 Bonuses available for a limited time only!
               </p>
             </div>

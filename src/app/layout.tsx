@@ -4,6 +4,7 @@ import './globals.css'
 import { CartProvider } from '@/contexts/CartContext'
 import Script from 'next/script'
 import UTMTracker from '@/components/UTMTracker'
+import FloatingCartButton from '@/components/FloatingCartButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -54,6 +55,7 @@ export default function RootLayout({
         <CartProvider>
           {children}
           <UTMTracker />
+          <FloatingCartButton />
         </CartProvider>
       </body>
     </html>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import { getProductById } from '@/lib/products';
@@ -15,6 +15,7 @@ import Image from 'next/image';
 
 export default function ProductDetailsPage() {
   const params = useParams();
+  const router = useRouter();
   const productId = params.id as string;
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +43,8 @@ export default function ProductDetailsPage() {
   const handleAddToCart = () => {
     if (product && canAddItem(product.product_id)) {
       addItem(product);
+      // Automatically redirect to cart page
+      router.push('/cart');
     }
   };
 
@@ -146,20 +149,17 @@ export default function ProductDetailsPage() {
               {/* Pricing */}
               <div className="mb-6">
                 <div className="flex items-center space-x-4">
-                  <div className="text-3xl font-bold text-[#6528F7]">
-                    Ksh. {product.sale_price.toLocaleString()}
-                  </div>
                   <div className="text-xl text-gray-500 line-through">
                     Ksh. {product.price.toLocaleString()}
                   </div>
-                  <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">
-                    Save Ksh. {(product.price - product.sale_price).toLocaleString()}
+                  <div className="text-3xl font-bold text-[#6528F7]">
+                    Ksh. {product.sale_price.toLocaleString()}
                   </div>
                 </div>
               </div>
 
               {/* Short Description */}
-              <p className="text-lg text-gray-700 mb-6">
+              <p className="text-base text-gray-700 mb-6">
                 {product.short_description}
               </p>
 
@@ -183,33 +183,17 @@ export default function ProductDetailsPage() {
           </div>
         </div>
 
-        {/* Bonus Resources */}
-        <BonusResources />
-
-        {/* Second Add to Cart Button */}
-        <div className="my-8">
-          <button
-            onClick={handleAddToCart}
-            disabled={!canAddItem(product.product_id)}
-            className={`w-full py-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center space-x-2 text-lg ${
-              canAddItem(product.product_id)
-                ? 'bg-[#6528F7] text-white hover:bg-[#5a1fd8]'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            <ShoppingCart className="h-6 w-6" />
-            <span>{quantity > 0 ? `In Cart (${quantity})` : 'Add to Cart'}</span>
-          </button>
-        </div>
-
         {/* Detailed Description */}
-        <div className="mt-12 bg-white rounded-lg shadow-md p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Description</h2>
+        <div className="mt-12 bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Product Description</h2>
           <div 
-            className="max-w-none"
+            className="max-w-none text-sm leading-relaxed"
             dangerouslySetInnerHTML={{ __html: product.description }}
           />
         </div>
+
+        {/* Bonus Resources */}
+        <BonusResources />
 
         {/* Reviews Section */}
         <div className="mt-12 bg-white rounded-lg shadow-md p-8">
@@ -231,19 +215,6 @@ export default function ProductDetailsPage() {
             <span>{quantity > 0 ? `In Cart (${quantity})` : 'Add to Cart'}</span>
           </button>
         </div>
-
-        {/* Floating Proceed to Pay Button */}
-        {quantity > 0 && (
-          <div className="fixed bottom-6 right-6 z-50">
-            <Link
-              href="/cart"
-              className="bg-[#6528F7] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#5a1fd8] transition-colors duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span>Proceed to Pay ({quantity})</span>
-            </Link>
-          </div>
-        )}
       </div>
     </div>
   );

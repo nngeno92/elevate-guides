@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import { useCart } from '@/contexts/CartContext';
 import { Trash2, CreditCard, Download, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { MpesaPaymentRequest, MpesaPaymentResponse, MpesaTransactionStatusResponse } from '@/types';
-import { trackInitiateCheckout, trackPurchase } from '@/lib/analytics';
+import { trackPurchase } from '@/lib/analytics';
 import PaymentSuccessModal from '@/components/PaymentSuccessModal';
 import { createOrder } from '@/lib/orderManagement';
 
@@ -65,10 +65,6 @@ export default function CartPage() {
         setPaymentStatus('success');
         setReceiptNumber(result.mpesa_receipt_number || 'N/A');
         
-        // Track purchase event
-        const orderId = result.transaction_id || `order_${Date.now()}`;
-        await trackPurchase(state.items, state.total, orderId, phoneNumber);
-        
         // Create order in backend using the stored order number
         const currentOrderNumber = orderNumberRef.current || orderNumber;
         console.log('🔢 Using order number for backend:', currentOrderNumber);
@@ -120,7 +116,7 @@ export default function CartPage() {
           receiptNumber: result.mpesa_receipt_number || 'N/A',
           productIds: state.items.map(item => item.product_id),
           orderId: currentOrderNumber,
-          transactionId: orderId // Keep transaction ID for reference
+          transactionId: result.transaction_id || `order_${Date.now()}` // Keep transaction ID for reference
         };
         
         // Store in localStorage for immediate access
@@ -135,10 +131,16 @@ export default function CartPage() {
         // Show success modal
         setShowSuccessModal(true);
         
-        // Add delay to see logs before redirect
-        console.log('⏳ Waiting 5 seconds before redirect to see logs...');
+        // Track purchase event AFTER successful payment confirmation
+        const orderId = result.transaction_id || `order_${Date.now()}`;
+        console.log('📊 Tracking purchase event to Meta...');
+        await trackPurchase(state.items, state.total, orderId, phoneNumber);
+        console.log('✅ Purchase event tracked successfully');
         
-        // Clear cart and redirect after modal animation and debug delay
+        // Wait 5 seconds to ensure Meta receives the purchase event before redirecting
+        console.log('⏳ Waiting 5 seconds to ensure Meta receives purchase event...');
+        
+        // Clear cart and redirect after ensuring Meta tracking is complete
         setTimeout(() => {
           clearCart();
           const productIds = state.items.map(item => item.product_id).join(',');
@@ -276,9 +278,6 @@ export default function CartPage() {
       return;
     }
 
-    // Track initiate checkout event
-    await trackInitiateCheckout(state.items, state.total, phoneNumber);
-
     setIsProcessing(true);
     setPaymentStatus('idle');
     setPaymentMessage('');
@@ -363,11 +362,11 @@ export default function CartPage() {
       <Header />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Your Cart</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-6">Your Cart</h1>
         
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-2 gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
               
@@ -376,17 +375,11 @@ export default function CartPage() {
                   <div key={item.product_id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900">{item.product_name}</h3>
-                      <p className="text-sm text-gray-600 mt-1">Ksh. {item.sale_price.toLocaleString()} each</p>
                     </div>
                     
                     <div className="flex items-center space-x-4">
-                      <div className="text-center">
-                        <span className="text-sm text-gray-600">Quantity:</span>
-                        <div className="font-semibold text-gray-900">{item.quantity}</div>
-                      </div>
-                      
                       <div className="text-right">
-                        <div className="font-semibold text-gray-900">Ksh. {(item.quantity * item.sale_price).toLocaleString()}</div>
+                        <div className="font-semibold text-gray-900">Ksh. {item.sale_price.toLocaleString()}</div>
                       </div>
                       
                       <button
@@ -404,25 +397,18 @@ export default function CartPage() {
           
           {/* Payment Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Payment</h2>
+            <div className="bg-gradient-to-br from-[#6528F7] to-[#5a1fd8] rounded-xl shadow-xl p-8 sticky top-24">
+              <h2 className="text-2xl font-bold text-white mb-6">Make Payment</h2>
               
               <div className="space-y-4">
-                <div className="flex justify-between text-lg">
-                  <span>Subtotal:</span>
-                  <span className="font-semibold">Ksh. {state.total.toLocaleString()}</span>
-                </div>
-                
-                <div className="border-t pt-4">
-                  <div className="flex justify-between text-xl font-bold">
-                    <span>Total:</span>
-                    <span className="text-[#6528F7]">Ksh. {state.total.toLocaleString()}</span>
-                  </div>
+                <div className="flex justify-between text-2xl font-bold text-white">
+                  <span>Total:</span>
+                  <span>Ksh. {state.total.toLocaleString()}</span>
                 </div>
                 
                 <div className="space-y-4 mt-6">
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
                       MPESA Phone Number
                     </label>
                     <input
@@ -431,7 +417,7 @@ export default function CartPage() {
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       placeholder="e.g., 0712345678"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6528F7] focus:border-transparent text-black"
+                      className="w-full px-3 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-white focus:border-transparent text-black bg-white"
                     />
                   </div>
                   
@@ -462,7 +448,7 @@ export default function CartPage() {
                   <button
                     onClick={handlePayment}
                     disabled={isProcessing || state.items.length === 0 || paymentStatus === 'processing'}
-                    className="w-full bg-[#6528F7] text-white py-3 rounded-lg font-semibold hover:bg-[#5a1fd8] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    className="w-full bg-white text-[#6528F7] py-4 rounded-lg font-bold hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-lg"
                   >
                     {isProcessing || paymentStatus === 'processing' ? (
                       <>
@@ -477,7 +463,7 @@ export default function CartPage() {
                     )}
                   </button>
                   
-                  <p className="text-xs text-gray-500 text-center">
+                  <p className="text-xs text-white/80 text-center">
                     You will receive an MPESA prompt on your phone to complete the payment
                   </p>
                 </div>
