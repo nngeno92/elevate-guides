@@ -20,7 +20,7 @@ export default function ProductDetailsPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const { addItem, getItemQuantity, canAddItem } = useCart();
+  const { addItem, removeItem, getItemQuantity, canAddItem } = useCart();
 
   useEffect(() => {
     setIsLoading(true);
@@ -40,8 +40,14 @@ export default function ProductDetailsPage() {
     return () => clearTimeout(timer);
   }, [productId]);
 
-  const handleAddToCart = () => {
-    if (product && canAddItem(product.product_id)) {
+  const handleCartAction = () => {
+    if (!product) return;
+    
+    if (quantity > 0) {
+      // Remove from cart if already in cart
+      removeItem(product.product_id);
+    } else if (canAddItem(product.product_id)) {
+      // Add to cart if not in cart
       addItem(product);
       // Automatically redirect to cart page
       router.push('/cart');
@@ -168,16 +174,17 @@ export default function ProductDetailsPage() {
 
               {/* Add to Cart Button */}
               <button
-                onClick={handleAddToCart}
-                disabled={!canAddItem(product.product_id)}
+                onClick={handleCartAction}
                 className={`w-full py-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center space-x-2 text-lg ${
-                  canAddItem(product.product_id)
+                  quantity > 0
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : canAddItem(product.product_id)
                     ? 'bg-[#6528F7] text-white hover:bg-[#5a1fd8]'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
                 <ShoppingCart className="h-6 w-6" />
-                <span>{quantity > 0 ? `In Cart (${quantity})` : 'Add to Cart'}</span>
+                <span>{quantity > 0 ? `Remove from Cart` : 'Add to Cart'}</span>
               </button>
             </div>
           </div>
@@ -203,16 +210,17 @@ export default function ProductDetailsPage() {
         {/* Third Add to Cart Button */}
         <div className="mt-12">
           <button
-            onClick={handleAddToCart}
-            disabled={!canAddItem(product.product_id)}
+            onClick={handleCartAction}
             className={`w-full py-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center space-x-2 text-lg ${
-              canAddItem(product.product_id)
+              quantity > 0
+                ? 'bg-red-500 text-white hover:bg-red-600'
+                : canAddItem(product.product_id)
                 ? 'bg-[#6528F7] text-white hover:bg-[#5a1fd8]'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
             <ShoppingCart className="h-6 w-6" />
-            <span>{quantity > 0 ? `In Cart (${quantity})` : 'Add to Cart'}</span>
+            <span>{quantity > 0 ? `Remove from Cart` : 'Add to Cart'}</span>
           </button>
         </div>
       </div>

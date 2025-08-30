@@ -9,8 +9,8 @@ export default function FloatingCartButton() {
   const { state } = useCart();
   const pathname = usePathname();
   
-  // Don't show on cart page, success page, or if cart is empty
-  if (pathname === '/cart' || pathname === '/success' || state.items.length === 0) {
+  // Don't show on cart page, success pages, or if cart is empty
+  if (pathname === '/cart' || pathname === '/success' || pathname === '/payment-success' || pathname === '/payment-failed' || state.items.length === 0) {
     return null;
   }
 

@@ -11,13 +11,18 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { addItem, getItemQuantity, canAddItem } = useCart();
+  const { addItem, removeItem, getItemQuantity, canAddItem } = useCart();
   const quantity = getItemQuantity(product.product_id);
 
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const handleCartAction = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (canAddItem(product.product_id)) {
+    
+    if (quantity > 0) {
+      // Remove from cart if already in cart
+      removeItem(product.product_id);
+    } else if (canAddItem(product.product_id)) {
+      // Add to cart if not in cart
       addItem(product);
     }
   };
@@ -56,16 +61,17 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
             
                            <button
-                 onClick={handleAddToCart}
-                 disabled={!canAddItem(product.product_id)}
+                 onClick={handleCartAction}
                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors duration-200 text-sm font-medium ${
-                   canAddItem(product.product_id)
+                   quantity > 0
+                     ? 'bg-red-500 text-white hover:bg-red-600'
+                     : canAddItem(product.product_id)
                      ? 'bg-[#6528F7] text-white hover:bg-[#5a1fd8]'
                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                  }`}
                >
                  <ShoppingCart className="h-4 w-4" />
-                 <span>{quantity > 0 ? `In Cart (${quantity})` : 'Add to Cart'}</span>
+                 <span>{quantity > 0 ? `Remove from Cart` : 'Add to Cart'}</span>
                </button>
           </div>
         </div>
