@@ -11,9 +11,12 @@ export default function AboutPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             About Business in Kenya
           </h1>
-                      <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              We are dedicated to empowering Kenyan entrepreneurs with the tools and knowledge they need to succeed in today&apos;s competitive business environment.
-            </p>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            We are dedicated to empowering Kenyan entrepreneurs with the tools and knowledge they need to succeed in today&apos;s competitive business environment.
+          </p>
+          <p className="text-sm text-gray-500 mt-4 max-w-2xl mx-auto">
+            Bizz.ke is owned and operated by Business in Kenya (businessinkenya.co.ke), a trusted name in providing business resources and guidance to Kenyan entrepreneurs.
+          </p>
         </div>
         
         <div className="grid md:grid-cols-2 gap-12 mb-16">
@@ -58,7 +61,7 @@ export default function AboutPage() {
                 <CheckCircle className="h-6 w-6 text-[#6528F7] mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-gray-900">Secure Payment</h3>
-                  <p className="text-gray-600 text-sm">Safe and secure MPESA payment processing for your convenience.</p>
+                  <p className="text-gray-600 text-sm">Safe and secure payment processing via Paystack, including MPESA and other payment methods.</p>
                 </div>
               </div>
             </div>
