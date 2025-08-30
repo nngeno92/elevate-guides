@@ -25,11 +25,12 @@ const storeUTMParams = () => {
     utm_campaign: urlParams.get('utm_campaign') || '',
     utm_term: urlParams.get('utm_term') || '',
     utm_content: urlParams.get('utm_content') || '',
+    fbclid: urlParams.get('fbclid') || '', // Facebook click ID
     timestamp: Date.now()
   };
   
-  // Only store if we have UTM parameters
-  if (utmParams.utm_source || utmParams.utm_medium || utmParams.utm_campaign) {
+  // Store if we have UTM parameters or Facebook click ID
+  if (utmParams.utm_source || utmParams.utm_medium || utmParams.utm_campaign || utmParams.fbclid) {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + UTM_COOKIE_EXPIRY_DAYS);
     
@@ -191,8 +192,14 @@ export const trackInitiateCheckout = async (products: any[], total: number, phon
   }
 };
 
-// Track purchase event
-export const trackPurchase = async (products: any[], total: number, orderId: string, phoneNumber?: string) => {
+// Track purchase event with email and click ID
+export const trackPurchase = async (
+  products: any[], 
+  total: number, 
+  orderId: string, 
+  email: string, 
+  clickId?: string
+) => {
   // Meta Pixel tracking (always track)
   if (typeof window !== 'undefined' && window.fbq) {
     window.fbq('track', 'Purchase', {
@@ -207,9 +214,8 @@ export const trackPurchase = async (products: any[], total: number, orderId: str
   }
 
   // Meta Conversions API tracking (only for Facebook/Instagram traffic)
-  if (phoneNumber && isFacebookTraffic()) {
-    const formattedPhone = formatPhoneNumber(phoneNumber);
-    const hashedPhone = await hashData(formattedPhone);
+  if (isFacebookTraffic()) {
+    const hashedEmail = await hashData(email);
     
     const eventData = {
       data: [{
@@ -219,7 +225,8 @@ export const trackPurchase = async (products: any[], total: number, orderId: str
         event_source_url: window.location.href,
         action_source: 'website',
         user_data: {
-          ph: hashedPhone,
+          em: hashedEmail,
+          ...(clickId && { external_id: clickId }),
         },
         custom_data: {
           currency: 'KES',
