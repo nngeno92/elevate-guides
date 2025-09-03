@@ -5,6 +5,7 @@ import { CartProvider } from '@/contexts/CartContext'
 import Script from 'next/script'
 import UTMTracker from '@/components/UTMTracker'
 import FloatingCartButton from '@/components/FloatingCartButton'
+import Footer from '@/components/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -53,7 +54,12 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <CartProvider>
-          {children}
+          <div className="min-h-screen flex flex-col">
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
           <UTMTracker />
           <FloatingCartButton />
         </CartProvider>
