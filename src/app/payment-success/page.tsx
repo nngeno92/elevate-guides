@@ -37,6 +37,36 @@ export default function PaymentSuccessPage() {
     try {
       console.log('🚀 Automatically triggering make.com automation for email:', email);
       
+      // First, send request to email delivery API
+      console.log('📧 Sending request to email delivery API...');
+      try {
+        const emailDeliveryData = {
+          recipient_email: email,
+          source: "business",
+          product_ids: products.map(product => product.product_id)
+        };
+        
+        console.log('📧 Email delivery data:', emailDeliveryData);
+        
+        const emailResponse = await fetch('https://shared-backend-bbb0ec9bc43a.herokuapp.com/api/email/deliver-products/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(emailDeliveryData),
+        });
+
+        if (!emailResponse.ok) {
+          const errorText = await emailResponse.text();
+          console.error('❌ Email delivery API Error:', emailResponse.status, errorText);
+        } else {
+          const emailResult = await emailResponse.json();
+          console.log('✅ Email delivery API Success:', emailResult);
+        }
+      } catch (emailError) {
+        console.error('❌ Email delivery API Request Error:', emailError);
+      }
+      
       // Generate order ID
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
