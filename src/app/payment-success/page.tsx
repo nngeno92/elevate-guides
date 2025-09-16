@@ -206,8 +206,8 @@ export default function PaymentSuccessPage() {
         console.log('✅ Make.com automation completed');
       }
       
-      // Wait 5 seconds to ensure Meta receives the data
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      // Wait 2 seconds to ensure Meta receives the data
+      await new Promise(resolve => setTimeout(resolve, 4000));
       
       // Navigate to success page
       const productIds = state.items.map(item => item.product_id).join(',');
@@ -256,6 +256,28 @@ export default function PaymentSuccessPage() {
           <p className="text-xl text-gray-600 mb-8">
             Your payment has been processed successfully. You can now access your business guides and resources.
           </p>
+
+          {/* Top Action Button */}
+          <div className="mb-8">
+            <button
+              onClick={handleGoToSuccess}
+              disabled={isTracking}
+              className="w-full max-w-md mx-auto bg-[#6528F7] text-white py-4 px-6 rounded-lg font-semibold hover:bg-[#5a1fd8] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            >
+              {isTracking ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Processing...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="h-5 w-5" />
+                  <span>Get What I Bought</span>
+                  <ArrowRight className="h-5 w-5" />
+                </>
+              )}
+            </button>
+          </div>
 
           {/* Payment Details */}
           <div className="bg-gray-50 rounded-lg p-6 mb-8">
