@@ -38,7 +38,6 @@ export default function PaymentSuccessPage() {
       console.log('🚀 Automatically triggering make.com automation for email:', email);
       
       // First, send request to email delivery API
-      console.log('📧 Sending request to email delivery API...');
       try {
         const emailDeliveryData = {
           recipient_email: email,
@@ -46,8 +45,6 @@ export default function PaymentSuccessPage() {
           source: "business",
           product_ids: products.map(product => product.product_id)
         };
-        
-        console.log('📧 Email delivery data:', emailDeliveryData);
         
         const emailResponse = await fetch('https://shared-backend-bbb0ec9bc43a.herokuapp.com/api/email/deliver-products/', {
           method: 'POST',
@@ -61,11 +58,35 @@ export default function PaymentSuccessPage() {
           const errorText = await emailResponse.text();
           console.error('❌ Email delivery API Error:', emailResponse.status, errorText);
         } else {
-          const emailResult = await emailResponse.json();
-          console.log('✅ Email delivery API Success:', emailResult);
+          console.log('✅ Email delivery API Success');
         }
       } catch (emailError) {
         console.error('❌ Email delivery API Request Error:', emailError);
+      }
+      
+      // Create business user
+      try {
+        const businessUserData = {
+          email: email,
+          phone_number: phoneNumber
+        };
+        
+        const businessUserResponse = await fetch('https://shared-backend-bbb0ec9bc43a.herokuapp.com/api/business/create/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(businessUserData),
+        });
+
+        if (!businessUserResponse.ok) {
+          const errorText = await businessUserResponse.text();
+          console.error('❌ Business user creation API Error:', businessUserResponse.status, errorText);
+        } else {
+          console.log('✅ Business user creation API Success');
+        }
+      } catch (businessUserError) {
+        console.error('❌ Business user creation API Request Error:', businessUserError);
       }
       
       // Generate order ID
@@ -180,14 +201,12 @@ export default function PaymentSuccessPage() {
       
       // Trigger make.com automation after Meta conversion tracking
       if (paymentData.email) {
-        console.log('📧 Starting make.com automation...');
         const products = state.items.map(item => getProductById(item.product_id)).filter(Boolean) as Product[];
         await triggerMakeAutomation(paymentData.email, products, paymentData, paymentData.phoneNumber);
         console.log('✅ Make.com automation completed');
       }
       
       // Wait 5 seconds to ensure Meta receives the data
-      console.log('⏳ Waiting 5 seconds to ensure Meta receives conversion data...');
       await new Promise(resolve => setTimeout(resolve, 5000));
       
       // Navigate to success page
@@ -297,7 +316,7 @@ export default function PaymentSuccessPage() {
               ) : (
                 <>
                   <Download className="h-5 w-5" />
-                  <span>Download Your Resources</span>
+                  <span>Get What I Bought</span>
                   <ArrowRight className="h-5 w-5" />
                 </>
               )}
