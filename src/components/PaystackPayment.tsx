@@ -9,6 +9,7 @@ interface PaystackPaymentProps {
   isOpen: boolean;
   onClose: () => void;
   email: string;
+  phoneNumber: string;
 }
 
 declare global {
@@ -17,7 +18,7 @@ declare global {
   }
 }
 
-export default function PaystackPayment({ isOpen, onClose, email }: PaystackPaymentProps) {
+export default function PaystackPayment({ isOpen, onClose, email, phoneNumber }: PaystackPaymentProps) {
   const { state } = useCart();
   const router = useRouter();
   const paystackRef = useRef<any>(null);
@@ -88,6 +89,7 @@ export default function PaystackPayment({ isOpen, onClose, email }: PaystackPaym
           transactionId: response.reference,
           paymentMethod: 'paystack',
           email: email,
+          phoneNumber: phoneNumber,
           clickId: getClickId()
         };
         

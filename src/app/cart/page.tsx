@@ -9,6 +9,7 @@ import PaystackPayment from '@/components/PaystackPayment';
 export default function CartPage() {
   const { state, removeItem } = useCart();
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [showPaystackModal, setShowPaystackModal] = useState(false);
 
   const handleRemoveItem = (productId: string) => {
@@ -86,8 +87,8 @@ export default function CartPage() {
                 <span>Ksh. {state.total.toLocaleString()}</span>
               </div>
               
-              {/* Email Section */}
-              <div className="space-y-3">
+              {/* Contact Information Section */}
+              <div className="space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                     📧 Email Address for Delivery
@@ -101,7 +102,24 @@ export default function CartPage() {
                     className="w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-white focus:border-transparent text-black bg-white font-medium"
                   />
                   <p className="text-xs text-white/80 mt-2">
-                    Your business guides and resources will be delivered to this email address. After entering your email, please click the &quot;Proceed to Pay&quot; button below.
+                    Your business guides and resources will be delivered to this email address.
+                  </p>
+                </div>
+                
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
+                    📱 WhatsApp Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="0712345678 or 0112333444"
+                    className="w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-white focus:border-transparent text-black bg-white font-medium"
+                  />
+                  <p className="text-xs text-white/80 mt-2">
+                    We will send your order links via Whatsapp to this number. Please ensure it is a working Whatsapp number. Enter your phone number in the format: 0712345678 or 0112333444 (without +254)
                   </p>
                 </div>
               </div>
@@ -110,7 +128,7 @@ export default function CartPage() {
               <div className="space-y-3">
                 <button
                   onClick={handleProceedToPay}
-                  disabled={!email || !email.includes('@')}
+                  disabled={!email || !email.includes('@') || !phoneNumber || phoneNumber.length < 10}
                   className="w-full bg-white text-[#6528F7] py-4 px-6 rounded-lg font-bold hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 text-lg"
                 >
                   <CreditCard className="h-6 w-6" />
@@ -131,6 +149,7 @@ export default function CartPage() {
         isOpen={showPaystackModal}
         onClose={() => setShowPaystackModal(false)}
         email={email}
+        phoneNumber={phoneNumber}
       />
     </div>
   );

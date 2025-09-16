@@ -33,7 +33,7 @@ export default function PaymentSuccessPage() {
     }
   }, [router]);
 
-  const triggerMakeAutomation = async (email: string, products: Product[], verification: any) => {
+  const triggerMakeAutomation = async (email: string, products: Product[], verification: any, phoneNumber: string) => {
     try {
       console.log('🚀 Automatically triggering make.com automation for email:', email);
       
@@ -42,6 +42,7 @@ export default function PaymentSuccessPage() {
       try {
         const emailDeliveryData = {
           recipient_email: email,
+          phone_number: phoneNumber,
           source: "business",
           product_ids: products.map(product => product.product_id)
         };
@@ -181,7 +182,7 @@ export default function PaymentSuccessPage() {
       if (paymentData.email) {
         console.log('📧 Starting make.com automation...');
         const products = state.items.map(item => getProductById(item.product_id)).filter(Boolean) as Product[];
-        await triggerMakeAutomation(paymentData.email, products, paymentData);
+        await triggerMakeAutomation(paymentData.email, products, paymentData, paymentData.phoneNumber);
         console.log('✅ Make.com automation completed');
       }
       
