@@ -260,13 +260,14 @@ export const trackInitiateCheckout = async (products: any[], total: number, phon
   }
 };
 
-// Track purchase event with email and click ID
+// Track purchase event with email, phone number and click ID
 export const trackPurchase = async (
   products: any[], 
   total: number, 
   orderId: string, 
   email: string, 
-  clickId?: string
+  clickId?: string,
+  phoneNumber?: string
 ) => {
   console.log('🔄 Starting purchase tracking...');
   
@@ -288,6 +289,7 @@ export const trackPurchase = async (
   if (isFacebookTraffic()) {
     console.log('📊 Tracking purchase with Meta Conversions API...');
     const hashedEmail = await hashData(email);
+    const hashedPhone = phoneNumber ? await hashData(formatPhoneNumber(phoneNumber)) : undefined;
     
     const eventData = {
       data: [{
@@ -298,6 +300,7 @@ export const trackPurchase = async (
         action_source: 'website',
         user_data: {
           em: hashedEmail,
+          ...(hashedPhone && { ph: hashedPhone }),
           ...(clickId && { external_id: clickId }),
         },
         custom_data: {

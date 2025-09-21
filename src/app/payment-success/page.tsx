@@ -188,13 +188,14 @@ export default function PaymentSuccessPage() {
     try {
       console.log('📊 Starting Meta conversion tracking...');
       
-      // Track purchase event with email and click ID
+      // Track purchase event with email, phone number and click ID
       await trackPurchase(
         state.items,
         state.total,
         paymentData.orderId,
         paymentData.email,
-        paymentData.clickId
+        paymentData.clickId,
+        paymentData.phoneNumber
       );
       
       console.log('✅ Meta conversion tracking completed');
