@@ -274,6 +274,10 @@ export const trackPurchase = async (
   // Meta Pixel tracking (always track)
   if (typeof window !== 'undefined' && window.fbq) {
     console.log('📊 Tracking purchase with Meta Pixel...');
+    const eventId = `purchase_${orderId}`;
+    const hashedEmail = await hashData(email);
+    const hashedPhone = phoneNumber ? await hashData(formatPhoneNumber(phoneNumber)) : undefined;
+    
     window.fbq('track', 'Purchase', {
       content_category: 'Business Guides',
       content_type: 'product',
@@ -282,6 +286,11 @@ export const trackPurchase = async (
       content_ids: products.map(p => p.product_id),
       num_items: products.length,
       order_id: orderId,
+    }, { 
+      eventID: eventId,
+      em: hashedEmail,
+      ...(hashedPhone && { ph: hashedPhone }),
+      ...(clickId && { fbc: clickId })
     });
   }
 
@@ -290,18 +299,19 @@ export const trackPurchase = async (
     console.log('📊 Tracking purchase with Meta Conversions API...');
     const hashedEmail = await hashData(email);
     const hashedPhone = phoneNumber ? await hashData(formatPhoneNumber(phoneNumber)) : undefined;
+    const eventId = `purchase_${orderId}`;
     
     const eventData = {
       data: [{
         event_name: 'Purchase',
         event_time: Math.floor(Date.now() / 1000),
-        event_id: `purchase_${orderId}`,
+        event_id: eventId,
         event_source_url: window.location.href,
         action_source: 'website',
         user_data: {
           em: hashedEmail,
           ...(hashedPhone && { ph: hashedPhone }),
-          ...(clickId && { external_id: clickId }),
+          ...(clickId && { fbc: clickId }),
         },
         custom_data: {
           currency: 'KES',
