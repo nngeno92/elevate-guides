@@ -48,6 +48,35 @@ export default function PaystackPayment({ isOpen, onClose, email, phoneNumber }:
     const amount = state.total * 100; // Convert to kobo (smallest currency unit)
     const reference = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+    // Create custom metadata for Paystack
+    const customFields = [
+      {
+        display_name: "Plugin",
+        variable_name: "plugin",
+        value: "nextjs-paystack"
+      },
+      {
+        display_name: "Order ID",
+        variable_name: "order_id",
+        value: reference
+      },
+      {
+        display_name: "Customer Email",
+        variable_name: "customer_email",
+        value: email
+      },
+      {
+        display_name: "Customer Phone",
+        variable_name: "customer_phone",
+        value: phoneNumber
+      },
+      {
+        display_name: "Products",
+        variable_name: "products",
+        value: state.items.map(item => item.product_id).join(',')
+      }
+    ];
+
     const handler = paystackRef.current.setup({
       key: PAYSTACK_PUBLIC_KEY,
       email: email,
@@ -55,6 +84,9 @@ export default function PaystackPayment({ isOpen, onClose, email, phoneNumber }:
       currency: 'KES',
       ref: reference,
       channels: ['mobile_money', 'card', 'bank', 'ussd', 'qr', 'bank_transfer'],
+      metadata: {
+        custom_fields: customFields
+      },
       callback: function(response: any) {
         // Payment successful
         console.log('Payment successful:', response);
