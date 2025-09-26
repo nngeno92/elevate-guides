@@ -35,10 +35,10 @@ export default function ContactPage() {
                     <h3 className="font-semibold text-gray-900 mb-1">Email Us</h3>
                     <p className="text-gray-600 mb-2">Get in touch for business inquiries and support</p>
                     <a 
-                      href="mailto:info@businessinkenya.co.ke"
+                      href="mailto:info@bizz.ke"
                       className="text-[#6528F7] hover:text-[#5a1fd8] font-medium transition-colors duration-200"
                     >
-                      info@businessinkenya.co.ke
+                      info@bizz.ke
                     </a>
                   </div>
                 </div>

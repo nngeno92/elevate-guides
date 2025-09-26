@@ -111,6 +111,16 @@ export default function AboutPage() {
             Browse Our Business Guides
           </a>
         </div>
+
+        {/* Business Information Section */}
+        <div className="mt-12 bg-white rounded-lg shadow-md p-8 text-center">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            ESSENTIAL INSIGHTS GUIDES AND SOLUTIONS
+          </h3>
+          <p className="text-sm text-gray-600 max-w-4xl mx-auto">
+            FLOOR: 1ST ROOM: 104 THE DIGZ, ALONG THIKA ROAD, KIAMBU THIKA WEST DISTRICT JUJA P.O BOX 698, 00521 - EMBAKASI
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -141,6 +141,20 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {/* Business Information Section */}
+      <section className="py-12 bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              ESSENTIAL INSIGHTS GUIDES AND SOLUTIONS
+            </h3>
+            <p className="text-sm text-gray-600 max-w-4xl mx-auto">
+              FLOOR: 1ST ROOM: 104 THE DIGZ, ALONG THIKA ROAD, KIAMBU THIKA WEST DISTRICT JUJA P.O BOX 698, 00521 - EMBAKASI
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 } 
