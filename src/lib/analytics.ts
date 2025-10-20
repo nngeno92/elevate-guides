@@ -16,6 +16,40 @@ const CONVERSION_STORAGE_API = 'https://shared-backend-bbb0ec9bc43a.herokuapp.co
 // UTM Cookie Management
 const UTM_COOKIE_NAME = 'bik_utm_params';
 const UTM_COOKIE_EXPIRY_DAYS = 30;
+const FBC_COOKIE_NAME = '_fbc';
+
+// Cookie helpers
+const getCookie = (name: string): string | null => {
+  if (typeof document === 'undefined') return null;
+  const cookies = document.cookie.split(';');
+  const target = cookies.find(c => c.trim().startsWith(`${name}=`));
+  if (!target) return null;
+  try {
+    return decodeURIComponent(target.split('=')[1]);
+  } catch {
+    return null;
+  }
+};
+
+const setCookie = (name: string, value: string, days: number) => {
+  if (typeof document === 'undefined') return;
+  const expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + days);
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
+};
+
+// Ensure we have a properly formatted fbc value. If _fbc cookie exists, return it.
+// Otherwise, build one from fbclid using format: fb.1.<creation_time>.<fbclid>
+const ensureFbc = (fbclid?: string | null): string | null => {
+  if (typeof window === 'undefined') return null;
+  const existing = getCookie(FBC_COOKIE_NAME);
+  if (existing) return existing;
+  if (!fbclid) return null;
+  const creationTime = Date.now();
+  const fbc = `fb.1.${creationTime}.${fbclid}`;
+  setCookie(FBC_COOKIE_NAME, fbc, UTM_COOKIE_EXPIRY_DAYS);
+  return fbc;
+};
 
 // Store UTM parameters in cookie
 const storeUTMParams = () => {
@@ -38,6 +72,10 @@ const storeUTMParams = () => {
     expiryDate.setDate(expiryDate.getDate() + UTM_COOKIE_EXPIRY_DAYS);
     
     document.cookie = `${UTM_COOKIE_NAME}=${JSON.stringify(utmParams)}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
+    // Also ensure _fbc cookie exists if fbclid is present
+    if (utmParams.fbclid) {
+      ensureFbc(utmParams.fbclid);
+    }
   }
 };
 
@@ -277,6 +315,14 @@ export const trackPurchase = async (
     const eventId = `purchase_${orderId}`;
     const hashedEmail = await hashData(email);
     const hashedPhone = phoneNumber ? await hashData(formatPhoneNumber(phoneNumber)) : undefined;
+    // Build/obtain fbc in the correct format
+    let fbc: string | null = null;
+    // Prefer provided clickId (fbclid), else look in URL/cookies
+    const urlParams = new URLSearchParams(window.location.search);
+    const fbclidFromUrl = urlParams.get('fbclid');
+    const storedUtm = getUTMParams();
+    const fbclid = clickId || fbclidFromUrl || storedUtm?.fbclid || null;
+    fbc = ensureFbc(fbclid) || getCookie(FBC_COOKIE_NAME);
     
     window.fbq('track', 'Purchase', {
       content_category: 'Business Guides',
@@ -290,7 +336,7 @@ export const trackPurchase = async (
       eventID: eventId,
       em: hashedEmail,
       ...(hashedPhone && { ph: hashedPhone }),
-      ...(clickId && { fbc: clickId })
+      ...(fbc ? { fbc } : {})
     });
   }
 
@@ -300,6 +346,12 @@ export const trackPurchase = async (
     const hashedEmail = await hashData(email);
     const hashedPhone = phoneNumber ? await hashData(formatPhoneNumber(phoneNumber)) : undefined;
     const eventId = `purchase_${orderId}`;
+    // Ensure fbc for CAPI as well
+    const urlParams = new URLSearchParams(window.location.search);
+    const fbclidFromUrl = urlParams.get('fbclid');
+    const storedUtm = getUTMParams();
+    const fbclid = clickId || fbclidFromUrl || storedUtm?.fbclid || null;
+    const fbc = ensureFbc(fbclid) || getCookie(FBC_COOKIE_NAME);
     
     const eventData = {
       data: [{
@@ -311,7 +363,7 @@ export const trackPurchase = async (
         user_data: {
           em: hashedEmail,
           ...(hashedPhone && { ph: hashedPhone }),
-          ...(clickId && { fbc: clickId }),
+          ...(fbc ? { fbc } : {}),
         },
         custom_data: {
           currency: 'KES',
