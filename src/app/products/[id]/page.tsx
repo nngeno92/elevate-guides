@@ -219,10 +219,10 @@ export default function ProductDetailsPage() {
 
         {/* Product Video (optional) */}
         {product.vsl && (
-          <div className="mt-12 bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <div className="mt-12 bg-white rounded-lg shadow-md p-0 sm:p-6">
             <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
               <iframe
-                src={`${getYouTubeEmbedUrl(product.vsl)}?rel=0`}
+                src={`${getYouTubeEmbedUrl(product.vsl)}?rel=0&modestbranding=1`}
                 title="Product Video"
                 className="absolute top-0 left-0 w-full h-full rounded-md"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
