@@ -54,6 +54,33 @@ export default function ProductDetailsPage() {
     }
   };
 
+  const getYouTubeEmbedUrl = (url?: string): string | undefined => {
+    if (!url) return undefined;
+    try {
+      const u = new URL(url);
+      // youtu.be/<id>
+      if (u.hostname.includes('youtu.be')) {
+        const id = u.pathname.replace('/', '');
+        return `https://www.youtube.com/embed/${id}`;
+      }
+      // youtube.com/watch?v=<id>
+      if (u.hostname.includes('youtube.com')) {
+        if (u.pathname === '/watch') {
+          const id = u.searchParams.get('v');
+          if (id) return `https://www.youtube.com/embed/${id}`;
+        }
+        // already embed
+        if (u.pathname.startsWith('/embed/')) {
+          return url;
+        }
+      }
+      // fallback: return original
+      return url;
+    } catch {
+      return url;
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -189,6 +216,22 @@ export default function ProductDetailsPage() {
             </div>
           </div>
         </div>
+
+        {/* Product Video (optional) */}
+        {product.vsl && (
+          <div className="mt-12 bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
+              <iframe
+                src={`${getYouTubeEmbedUrl(product.vsl)}?rel=0`}
+                title="Product Video"
+                className="absolute top-0 left-0 w-full h-full rounded-md"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        )}
 
         {/* Detailed Description */}
         <div className="mt-12 bg-white rounded-lg shadow-md p-6">

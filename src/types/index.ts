@@ -15,6 +15,7 @@ export interface Product {
   wordpress_product_link: string;
   google_file_link: string;
   google_download_link: string;
+  vsl?: string;
   reviews: Review[];
 }
 
