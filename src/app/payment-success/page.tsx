@@ -15,6 +15,7 @@ export default function PaymentSuccessPage() {
   const { state } = useCart();
   const [paymentData, setPaymentData] = useState<any>(null);
   const [isTracking, setIsTracking] = useState(false);
+  const [deliveryTriggered, setDeliveryTriggered] = useState(false);
 
   useEffect(() => {
     // Get payment verification data
@@ -180,46 +181,54 @@ export default function PaymentSuccessPage() {
     }
   };
 
-  const handleGoToSuccess = async () => {
-    if (!paymentData || isTracking) return;
-    
-    setIsTracking(true);
-    
-    try {
-      console.log('📊 Starting Meta conversion tracking...');
-      
-      // Track purchase event with email, phone number and click ID
-      await trackPurchase(
-        state.items,
-        state.total,
-        paymentData.orderId,
-        paymentData.email,
-        paymentData.clickId,
-        paymentData.phoneNumber
-      );
-      
-      console.log('✅ Meta conversion tracking completed');
-      
-      // Trigger make.com automation after Meta conversion tracking
-      if (paymentData.email) {
-        const products = state.items.map(item => getProductById(item.product_id)).filter(Boolean) as Product[];
-        await triggerMakeAutomation(paymentData.email, products, paymentData, paymentData.phoneNumber);
-        console.log('✅ Make.com automation completed');
-      }
-      
-      // Wait 2 seconds to ensure Meta receives the data
-      await new Promise(resolve => setTimeout(resolve, 4000));
-      
-      // Navigate to success page
-      const productIds = state.items.map(item => item.product_id).join(',');
-      router.push(`/success?products=${productIds}`);
-      
-    } catch (error) {
-      console.error('❌ Error during Meta conversion tracking:', error);
-      // Still navigate even if tracking fails
-      const productIds = state.items.map(item => item.product_id).join(',');
-      router.push(`/success?products=${productIds}`);
+  // Automatically trigger delivery when payment data is available
+  useEffect(() => {
+    if (!paymentData || deliveryTriggered || !paymentData.email || state.items.length === 0) {
+      return;
     }
+
+    const triggerDeliveryAutomatically = async () => {
+      setDeliveryTriggered(true);
+      setIsTracking(true);
+
+      try {
+        console.log('🚀 Automatically triggering delivery for successful payment...');
+        
+        // Step 1: Track Meta conversion
+        console.log('📊 Starting Meta conversion tracking...');
+        await trackPurchase(
+          state.items,
+          state.total,
+          paymentData.orderId,
+          paymentData.email,
+          paymentData.clickId,
+          paymentData.phoneNumber
+        );
+        console.log('✅ Meta conversion tracking completed');
+
+        // Step 2: Trigger delivery automation
+        const products = state.items.map(item => getProductById(item.product_id)).filter(Boolean) as Product[];
+        if (products.length > 0) {
+          await triggerMakeAutomation(paymentData.email, products, paymentData, paymentData.phoneNumber);
+          console.log('✅ Delivery automation completed');
+        }
+
+        setIsTracking(false);
+      } catch (error) {
+        console.error('❌ Error during automatic delivery:', error);
+        setIsTracking(false);
+        // Still continue - delivery was attempted
+      }
+    };
+
+    triggerDeliveryAutomatically();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentData, deliveryTriggered, state.items, state.total]);
+
+  const handleGoToSuccess = () => {
+    // Navigate to success page - delivery is already triggered automatically
+    const productIds = state.items.map(item => item.product_id).join(',');
+    router.push(`/success?products=${productIds}`);
   };
 
   if (!paymentData) {
@@ -268,12 +277,12 @@ export default function PaymentSuccessPage() {
               {isTracking ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  <span>Processing...</span>
+                  <span>Processing Your Order...</span>
                 </>
               ) : (
                 <>
                   <Download className="h-5 w-5" />
-                  <span>Get What I Bought</span>
+                  <span>View Your Products</span>
                   <ArrowRight className="h-5 w-5" />
                 </>
               )}
@@ -347,8 +356,8 @@ export default function PaymentSuccessPage() {
             
             <p className="text-sm text-gray-600">
               {isTracking 
-                ? "Processing your order and reporting conversion data to Meta. This will take a few seconds..."
-                : "You'll be redirected to the download page where you can access all your purchased business guides and bonus resources."
+                ? "We're processing your order and sending your products to your email. This will take a few seconds..."
+                : "Your products are being delivered to your email. Click the button above to view your download links."
               }
             </p>
           </div>
