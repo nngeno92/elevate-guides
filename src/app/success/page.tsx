@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import Header from '@/components/Header';
-import { Download, CheckCircle, ArrowLeft, Mail, ExternalLink, XCircle } from 'lucide-react';
+import { Download, CheckCircle, ArrowLeft, Mail, ExternalLink, XCircle, ChevronDown, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { getProductById } from '@/lib/products';
@@ -15,6 +15,8 @@ function SuccessContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [customerEmail, setCustomerEmail] = useState<string>('');
   const [debugLogs, setDebugLogs] = useState<any>(null);
+  const [isMobileAppOpen, setIsMobileAppOpen] = useState(false);
+  const [isEmailResourcesOpen, setIsEmailResourcesOpen] = useState(false);
   
   useEffect(() => {
     // Check payment verification
@@ -244,121 +246,152 @@ function SuccessContent() {
               </div>
             )}
             
-            {/* Bonus Mobile App Section */}
+            {/* Bonus Mobile App Section - Accordion */}
             <div className="border-t pt-6">
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mb-6">
-                <div className="text-center mb-4">
-                  <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                    <span className="text-2xl">🎁</span>
+              <button
+                onClick={() => setIsMobileAppOpen(!isMobileAppOpen)}
+                className="w-full bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-4 mb-6 text-left hover:from-purple-100 hover:to-pink-100 transition-colors duration-200"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center">
+                      <span className="text-xl">🎁</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">Bonus Gift: Mobile App Access!</h3>
+                      <p className="text-sm text-gray-600">Get exclusive access to our mobile app with business tools and tips</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">🎉 Bonus Gift: Mobile App Access!</h3>
-                  <p className="text-gray-700 mb-4">
-                    As a special thank you for your purchase, we&apos;re giving you exclusive access to our Business in Kenya Mobile App! You&apos;ll use your email address to log into the app.
-                  </p>
+                  {isMobileAppOpen ? (
+                    <ChevronDown className="h-6 w-6 text-gray-600 flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-6 w-6 text-gray-600 flex-shrink-0" />
+                  )}
                 </div>
-                
-                <div className="bg-white rounded-lg p-4 mb-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">📱 What&apos;s Included in Your Bonus:</h4>
-                  <ul className="text-sm text-gray-700 space-y-1 mb-4">
-                    <li>• 🧠 In-depth Analysis of 100+ Business Ideas in Kenya</li>
-                    <li>• 💡 General Business Tips to Be Profitable</li>
-                    <li>• 📲 Daily Digital Marketing Tips</li>
-                    <li>• 🧮 Business Tools – Tax, Loan & Profit Calculators</li>
-                  </ul>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-                    <p className="text-yellow-800 text-sm font-medium">🔥 Limited Time Bonus - Download Now!</p>
+              </button>
+
+              {isMobileAppOpen && (
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6 mb-6">
+                  <div className="text-center mb-4">
+                    <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                      <span className="text-2xl">🎁</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">🎉 Bonus Gift: Mobile App Access!</h3>
+                    <p className="text-gray-700 mb-4">
+                      As a special thank you for your purchase, we&apos;re giving you exclusive access to our Business in Kenya Mobile App! You&apos;ll use your email address to log into the app.
+                    </p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 mb-4">
+                    <h4 className="font-semibold text-gray-900 mb-2">📱 What&apos;s Included in Your Bonus:</h4>
+                    <ul className="text-sm text-gray-700 space-y-1 mb-4">
+                      <li>• 🧠 In-depth Analysis of 100+ Business Ideas in Kenya</li>
+                      <li>• 💡 General Business Tips to Be Profitable</li>
+                      <li>• 📲 Daily Digital Marketing Tips</li>
+                      <li>• 🧮 Business Tools – Tax, Loan & Profit Calculators</li>
+                    </ul>
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+                      <p className="text-yellow-800 text-sm font-medium">🔥 Limited Time Bonus - Download Now!</p>
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <h4 className="font-semibold text-blue-900 mb-2">⚠️ Important Installation Note:</h4>
+                    <p className="text-blue-800 text-sm leading-relaxed">
+                      Because this is a direct app file (APK), your phone may ask you to allow installation from unknown sources. 
+                      You may also need to temporarily disable Play Protect during installation. After installation, you can turn Play Protect back on for security.
+                    </p>
+                  </div>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                    <h4 className="font-semibold text-green-900 mb-2">🔑 Login Information:</h4>
+                    <p className="text-green-800 text-sm leading-relaxed">
+                      Use the email address <strong>{customerEmail}</strong> to log into the mobile app. This is the same email where you&apos;ll receive your resources.
+                    </p>
+                  </div>
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                    <h4 className="font-semibold text-orange-900 mb-2">📱 Device Compatibility:</h4>
+                    <div className="text-orange-800 text-sm leading-relaxed space-y-2">
+                      <p><strong>Android Users:</strong> Download and install the APK file below.</p>
+                      <p><strong>iPhone Users:</strong> Access the same content via our web app at <a href="https://app.bizz.ke" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline font-medium">https://app.bizz.ke</a></p>
+                    </div>
+                  </div>
+                  <div className="text-center space-y-3">
+                    <a
+                      href="https://drive.google.com/file/d/1FQFxgNLaowq20pQt9kiSJc7cj3o4F090/view?usp=sharing"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      <Download className="h-5 w-5" />
+                      <span>Download The Android App</span>
+                    </a>
+                    <div className="text-sm text-gray-600">or</div>
+                    <a
+                      href="https://app.bizz.ke"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      <ExternalLink className="h-5 w-5" />
+                      <span>Access Web App (iPhone/All Devices)</span>
+                    </a>
                   </div>
                 </div>
-                
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">⚠️ Important Installation Note:</h4>
-                  <p className="text-blue-800 text-sm leading-relaxed">
-                    Because this is a direct app file (APK), your phone may ask you to allow installation from unknown sources. 
-                    You may also need to temporarily disable Play Protect during installation. After installation, you can turn Play Protect back on for security.
-                  </p>
-                </div>
-                
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                  <h4 className="font-semibold text-green-900 mb-2">🔑 Login Information:</h4>
-                  <p className="text-green-800 text-sm leading-relaxed">
-                    Use the email address <strong>{customerEmail}</strong> to log into the mobile app. This is the same email where you&apos;ll receive your resources.
-                  </p>
-                </div>
-                
-                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
-                  <h4 className="font-semibold text-orange-900 mb-2">📱 Device Compatibility:</h4>
-                  <div className="text-orange-800 text-sm leading-relaxed space-y-2">
-                    <p><strong>Android Users:</strong> Download and install the APK file below.</p>
-                    <p><strong>iPhone Users:</strong> Access the same content via our web app at <a href="https://app.bizz.ke" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline font-medium">https://app.bizz.ke</a></p>
-                  </div>
-                </div>
-                
-                <div className="text-center space-y-3">
-                  <a
-                    href="https://drive.google.com/file/d/1FQFxgNLaowq20pQt9kiSJc7cj3o4F090/view?usp=sharing"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
-                  >
-                    <Download className="h-5 w-5" />
-                    <span>Download The Android App</span>
-                  </a>
-                  
-                  <div className="text-sm text-gray-600">or</div>
-                  
-                  <a
-                    href="https://app.bizz.ke"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
-                  >
-                    <ExternalLink className="h-5 w-5" />
-                    <span>Access Web App (iPhone/All Devices)</span>
-                  </a>
-                </div>
-              </div>
+              )}
             </div>
             
-            {/* Email Resources Section */}
+            {/* Email Resources Section - Accordion */}
             <div className="border-t pt-6">
-              <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-xl p-6 mb-6">
-                <div className="text-center mb-4">
-                  <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                    <Mail className="h-8 w-8 text-green-600" />
+              <button
+                onClick={() => setIsEmailResourcesOpen(!isEmailResourcesOpen)}
+                className="w-full bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-xl p-4 mb-6 text-left hover:from-green-100 hover:to-blue-100 transition-colors duration-200"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center">
+                      <Mail className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">Resources Sent to Your Email</h3>
+                      <p className="text-sm text-gray-600">Check your email inbox for download links and instructions</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">📧 Resources Sent to Your Email</h3>
-                  <p className="text-gray-700 mb-4">
-                    We&apos;ve automatically sent your resources to <strong>{customerEmail}</strong>. This same email will also be used to log into your bonus mobile app!
-                  </p>
+                  {isEmailResourcesOpen ? (
+                    <ChevronDown className="h-6 w-6 text-gray-600 flex-shrink-0" />
+                  ) : (
+                    <ChevronRight className="h-6 w-6 text-gray-600 flex-shrink-0" />
+                  )}
                 </div>
-                
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                  <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-green-800 font-semibold">✅ Resources Sent Successfully!</p>
-                  <p className="text-green-700 text-sm mt-1">
-                    Check your inbox for the download links. If you don&apos;t see it, please check your SPAM folder.
-                  </p>
+              </button>
+
+              {isEmailResourcesOpen && (
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-xl p-6 mb-6">
+                  <div className="text-center mb-4">
+                    <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                      <Mail className="h-8 w-8 text-green-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">📧 Resources Sent to Your Email</h3>
+                    <p className="text-gray-700 mb-4">
+                      We&apos;ve automatically sent your resources to <strong>{customerEmail}</strong>. This same email will also be used to log into your bonus mobile app!
+                    </p>
+                  </div>
+                  
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                    <CheckCircle className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                    <p className="text-green-800 font-semibold">✅ Resources Sent Successfully!</p>
+                    <p className="text-green-700 text-sm mt-1">
+                      Check your inbox for the download links. If you don&apos;t see it, please check your SPAM folder.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 text-center">
+                    <p className="text-blue-800 text-sm">
+                      <strong>Important:</strong> If you cannot see the email in your inbox, please check your SPAM folder. Sometimes our emails can end up there.
+                    </p>
+                  </div>
                 </div>
-                
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 text-center">
-                  <p className="text-blue-800 text-sm">
-                    <strong>Important:</strong> If you cannot see the email in your inbox, please check your SPAM folder. Sometimes our emails can end up there.
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
             
             <div className="border-t pt-6">
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-gray-900 mb-2">What&apos;s Next?</h3>
-                <ul className="text-sm text-gray-600 space-y-1 text-left">
-                  <li>• Download your business guide(s)</li>
-                  <li>• Review the content thoroughly</li>
-                  <li>• Customize the plan for your specific needs</li>
-                  <li>• Start implementing your business strategy</li>
-                </ul>
-              </div>
-              
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/products"
