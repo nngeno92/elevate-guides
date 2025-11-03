@@ -108,7 +108,7 @@ export default function CartPage() {
                 
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-white mb-2">
-                    📱 WhatsApp Phone Number
+                    📱 Phone Number
                   </label>
                   <input
                     type="tel"
@@ -119,7 +119,7 @@ export default function CartPage() {
                     className="w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-white focus:border-transparent text-black bg-white font-medium"
                   />
                   <p className="text-xs text-white/80 mt-2">
-                    We will send your order links via Whatsapp to this number. Please ensure it is a working Whatsapp number. Enter your phone number in the format: 0712345678 or 0112333444 (without +254).
+                    We collect your phone number for order records and in case we need to clarify something about your order. Enter your phone number in the format: 0712345678 or 0112333444 (without +254).
                   </p>
                 </div>
               </div>
