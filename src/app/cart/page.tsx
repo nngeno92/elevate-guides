@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import { useCart } from '@/contexts/CartContext';
 import { Trash2, CreditCard } from 'lucide-react';
 import PaystackPayment from '@/components/PaystackPayment';
+import { trackInitiateCheckout } from '@/lib/analytics';
 
 export default function CartPage() {
   const { state, removeItem } = useCart();
@@ -16,7 +17,12 @@ export default function CartPage() {
     removeItem(productId);
   };
 
-  const handleProceedToPay = () => {
+  const handleProceedToPay = async () => {
+    try {
+      await trackInitiateCheckout(state.items, state.total, phoneNumber);
+    } catch (error) {
+      console.error('Failed to track initiate checkout event:', error);
+    }
     setShowPaystackModal(true);
   };
 
