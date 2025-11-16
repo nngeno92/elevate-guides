@@ -7,7 +7,7 @@ import { CheckCircle, Download, ArrowRight, Loader2 } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { trackPurchase } from '@/lib/analytics';
 import { getProductById } from '@/lib/products';
-import { updateOrderEmail } from '@/lib/orderManagement';
+// import { updateOrderEmail } from '@/lib/orderManagement';
 import { Product } from '@/types';
 
 export default function PaymentSuccessPage() {
@@ -38,57 +38,9 @@ export default function PaymentSuccessPage() {
     try {
       console.log('🚀 Automatically triggering make.com automation for email:', email);
       
-      // First, send request to email delivery API
-      try {
-        const emailDeliveryData = {
-          recipient_email: email,
-          phone_number: phoneNumber,
-          source: "business",
-          product_ids: products.map(product => product.product_id)
-        };
-        
-        const emailResponse = await fetch('https://shared-backend-bbb0ec9bc43a.herokuapp.com/api/email/deliver-products/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(emailDeliveryData),
-        });
-
-        if (!emailResponse.ok) {
-          const errorText = await emailResponse.text();
-          console.error('❌ Email delivery API Error:', emailResponse.status, errorText);
-        } else {
-          console.log('✅ Email delivery API Success');
-        }
-      } catch (emailError) {
-        console.error('❌ Email delivery API Request Error:', emailError);
-      }
+      // Email delivery API call disabled per request
       
-      // Create business user
-      try {
-        const businessUserData = {
-          email: email,
-          phone_number: phoneNumber
-        };
-        
-        const businessUserResponse = await fetch('https://shared-backend-bbb0ec9bc43a.herokuapp.com/api/business/create/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(businessUserData),
-        });
-
-        if (!businessUserResponse.ok) {
-          const errorText = await businessUserResponse.text();
-          console.error('❌ Business user creation API Error:', businessUserResponse.status, errorText);
-        } else {
-          console.log('✅ Business user creation API Success');
-        }
-      } catch (businessUserError) {
-        console.error('❌ Business user creation API Request Error:', businessUserError);
-      }
+      // Business user creation disabled per request
       
       // Generate order ID
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -149,32 +101,7 @@ export default function PaymentSuccessPage() {
 
       console.log('✅ Make.com automation triggered successfully');
       
-      // Update order in backend with email
-      try {
-        console.log('🔍 Looking for verification data...');
-        
-        const orderId = verification.orderId;
-        console.log('🆔 Order ID found:', orderId);
-        
-        if (orderId) {
-          console.log('📧 Updating order email for order:', orderId);
-          
-          const orderUpdateResult = await updateOrderEmail({
-            order_id: orderId,
-            email: email
-          });
-          
-          if (orderUpdateResult.success) {
-            console.log('✅ Order email updated successfully:', orderUpdateResult.order);
-          } else {
-            console.error('❌ Failed to update order email:', orderUpdateResult.error);
-          }
-        } else {
-          console.error('❌ No order ID found in verification data');
-        }
-      } catch (error) {
-        console.error('❌ Error updating order email:', error);
-      }
+      // Order update disabled per request
       
     } catch (error) {
       console.error('❌ Make.com automation failed:', error);

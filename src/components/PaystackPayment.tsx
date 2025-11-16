@@ -99,7 +99,7 @@ export default function PaystackPayment({ isOpen, onClose, email, phoneNumber }:
           
           // Then check stored UTM params
           const cookies = document.cookie.split(';');
-          const utmCookie = cookies.find(cookie => cookie.trim().startsWith('bik_utm_params='));
+          const utmCookie = cookies.find(cookie => cookie.trim().startsWith('elevate_utm_params='));
           if (utmCookie) {
             try {
               const cookieValue = utmCookie.split('=')[1];

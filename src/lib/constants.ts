@@ -14,3 +14,6 @@ export const PAYMENT_CONFIG = {
     custom_fields: []
   }
 }; 
+
+// Meta Pixel
+export const META_PIXEL_ID = '1342776413993013';

@@ -19,8 +19,8 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/business-in-kenya-logo.png"
-              alt="Business in Kenya Logo"
+              src="/guides-logo.jpeg"
+              alt="Elevate Guides Africa Logo"
               width={120}
               height={40}
               className="h-10 w-auto"

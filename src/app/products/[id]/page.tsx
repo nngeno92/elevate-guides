@@ -8,7 +8,6 @@ import { Product } from '@/types';
 import { ShoppingCart, Star, ArrowLeft, Loader2 } from 'lucide-react';
 import ReviewsSlider from '@/components/ReviewsSlider';
 import ProductBenefits from '@/components/ProductBenefits';
-import BonusResources from '@/components/BonusResources';
 import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -200,8 +199,7 @@ export default function ProductDetailsPage() {
           />
         </div>
 
-        {/* Bonus Resources */}
-        <BonusResources />
+        {/* Bonus Resources removed as requested */}
 
         {/* Reviews Section */}
         <div className="mt-12 bg-white rounded-lg shadow-md p-8">

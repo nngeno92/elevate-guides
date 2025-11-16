@@ -1,157 +1,112 @@
 import Header from '@/components/Header';
-import ProductCard from '@/components/ProductCard';
-import { getProducts } from '@/lib/products';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle } from 'lucide-react';
 
 export default function Home() {
-  const products = getProducts();
-  const featuredProducts = products.slice(0, 3);
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-[#6528F7] to-[#5a1fd8] text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Business Success Starts Here
+
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#6528F7] via-[#6b36ff] to-[#5a1fd8] text-white py-16">
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute -top-20 -right-20 w-72 h-72 bg-white rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-10 w-80 h-80 bg-blue-300 rounded-full blur-3xl" />
+        </div>
+        <div className="relative max-w-6xl mx-auto px-4">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
+              Welcome to Elevate Guides Africa
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-purple-100 max-w-3xl mx-auto">
-              Get instant access to proven business plans and guides designed specifically for the Kenyan market. Start your entrepreneurial journey today.
+            <p className="text-lg md:text-xl text-purple-100 leading-relaxed">
+              Your trusted source for practical, ready-to-use digital guides designed to help you learn, grow, and take action anytime, anywhere.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/products"
-                className="bg-white text-[#6528F7] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200 inline-flex items-center justify-center"
-              >
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Link href="/products" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white text-[#6528F7] font-semibold hover:bg-purple-50 transition-colors">
                 Browse Products
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-              <Link
-                href="/about"
-                className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-[#6528F7] transition-colors duration-200"
-              >
-                Learn More
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Choose Our Business Guides?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Our comprehensive business plans are designed to help you succeed in the Kenyan market
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-[#6528F7] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Instant Download
-              </h3>
-              <p className="text-gray-600">
-                Get your business plan immediately after payment. No waiting, no delays.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-[#6528F7] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Kenyan Market Focused
-              </h3>
-              <p className="text-gray-600">
-                All plans are specifically tailored for the Kenyan business environment.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="bg-[#6528F7] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Mobile Friendly
-              </h3>
-              <p className="text-gray-600">
-                Access your business plans on any device - phone, tablet, or computer.
-              </p>
-            </div>
-          </div>
+      <section className="py-12 bg-white">
+        <div className="max-w-6xl mx-auto px-4 space-y-6">
+          <p className="text-gray-700 text-lg">
+            We specialize in ebooks, business plans, fitness programs, career guides, and skill-building resources tailored for the African market. Whether you&apos;re looking to start a business, level up your fitness, or acquire high-income skills, we make learning easier, faster, and affordable.
+          </p>
+          <h2 className="text-3xl font-bold text-gray-900">Learn. Apply. Elevate.</h2>
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Featured Business Guides
-            </h2>
-            <p className="text-lg text-gray-600">
-              Start with our most popular business plans
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.product_id} product={product} />
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">⚡ Why Choose Elevate Guides Africa?</h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              '100% downloadable & offline-friendly',
+              'Created for Kenyan & African audiences',
+              'Proven guides used by thousands',
+              'Instant access to start learning immediately',
+              'Affordable, practical, results-focused',
+              'Mobile-first and easy to use',
+            ].map((text) => (
+              <div key={text} className="rounded-xl border border-gray-200 bg-white p-4">
+                <div className="text-sm font-medium text-gray-800">✔ {text}</div>
+              </div>
             ))}
           </div>
-          
-          <div className="text-center mt-12">
-            <Link
-              href="/products"
-              className="bg-[#6528F7] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#5a1fd8] transition-colors duration-200 inline-flex items-center"
-            >
-              View All Products
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
+        </div>
+      </section>
+
+      <section className="py-12 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">📚 Our Growing Library Includes:</h3>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              'Business & Entrepreneurship Guides',
+              'Fitness Programs & Meal Plans',
+              'Personal Development Resources',
+              'Digital Skills & Online Hustle Playbooks',
+            ].map((text) => (
+              <div key={text} className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <div className="text-gray-800">• {text}</div>
+              </div>
+            ))}
+            <div className="rounded-xl border border-dashed border-gray-300 p-4 text-gray-600">
+              … and much more coming soon.
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 bg-[#6528F7] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Start Your Business Journey?
-          </h2>
-          <p className="text-xl mb-8 text-purple-100">
-            Join thousands of successful entrepreneurs who started with our business guides
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 space-y-6">
+          <h3 className="text-2xl font-bold text-gray-900">✨ Our Mission</h3>
+          <p className="text-gray-700 text-lg">
+            To empower you with knowledge that creates growth – financially, mentally, and physically.
           </p>
-          <Link
-            href="/products"
-            className="bg-white text-[#6528F7] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200 inline-flex items-center"
-          >
-            Get Started Today
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {[
+              { title: 'Accessible', desc: 'Available anytime, anywhere' },
+              { title: 'Affordable', desc: 'Great value for everyone' },
+              { title: 'Actionable', desc: 'Learn today, apply today' },
+            ].map((item) => (
+              <div key={item.title} className="rounded-xl border border-gray-200 bg-white p-5">
+                <div className="text-lg font-semibold text-gray-900 mb-1">{item.title}</div>
+                <div className="text-sm text-gray-600">{item.desc}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Business Information Section */}
-      <section className="py-12 bg-white border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              ESSENTIAL INSIGHTS GUIDES AND SOLUTIONS
-            </h3>
-            <p className="text-sm text-gray-600 max-w-4xl mx-auto">
-              FLOOR: 1ST ROOM: 104 THE DIGZ, ALONG THIKA ROAD, KIAMBU THIKA WEST DISTRICT JUJA P.O BOX 698, 00521 - EMBAKASI
-            </p>
+      <section className="py-14 bg-white">
+        <div className="max-w-6xl mx-auto px-4 text-center space-y-4">
+          <h3 className="text-3xl font-extrabold text-gray-900">🛍️ Start Learning Today</h3>
+          <p className="text-gray-700 text-lg">Browse our digital library & transform your goals into reality. Your next level is one guide away.</p>
+          <div className="pt-2 flex items-center justify-center">
+            <Link href="/products" className="inline-flex items-center justify-center bg-[#6528F7] text-white px-8 py-3 rounded-lg font-semibold hover:bg-[#5a1fd8] transition-colors">
+              Browse Products
+            </Link>
           </div>
         </div>
       </section>

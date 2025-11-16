@@ -7,14 +7,14 @@ declare global {
 }
 
 // Meta Conversions API Configuration
-const ACCESS_TOKEN = 'EAARgBkBM2R4BPc5VZC7o0HXx1b3XX12NndZCUrZATYOo5TITwr5xZCXXNHE3GDsFNgzCnZC4MCod03AZAEQtyCRvcqXV0OLdNiORdTaVyc1ly57i5N7aLjmKQkdSKCZCALavY1QCxHImaMPqX9KZBbPLQnweFXx7gyHnExdXgMowUXq9YZCyQrFiPt598XPgWv6QYxQZDZD';
-const PIXEL_ID = '1904667380084931';
+const ACCESS_TOKEN = 'EAAVR4YNvPZCcBP5hHZATIZAfEcf0BOvaVfblQkZBznQueNtiFx62BQtBR9alqd3CTUBsIDlwKwQmPusKcrQjOJ2r1dPjhiSXVskHVe3MAw2hVj9GTvZCGurGtqpc7zpUUWisRAk8XFHwJlBxKQQOr98UPpMZCt0Shzlbf21txotU9b4vs4YDGTYXRK8MtXyN4f9QZDZD';
+import { META_PIXEL_ID } from './constants';
 
 // Your own conversion storage API endpoint
-const CONVERSION_STORAGE_API = 'https://shared-backend-bbb0ec9bc43a.herokuapp.com/api/meta/conversion/';
+// const CONVERSION_STORAGE_API = 'https://shared-backend-bbb0ec9bc43a.herokuapp.com/api/meta/conversion/';
 
 // UTM Cookie Management
-const UTM_COOKIE_NAME = 'bik_utm_params';
+const UTM_COOKIE_NAME = 'elevate_utm_params';
 const UTM_COOKIE_EXPIRY_DAYS = 30;
 const FBC_COOKIE_NAME = '_fbc';
 
@@ -171,7 +171,7 @@ const formatPhoneNumber = (phone: string): string => {
 // Send event to Meta Conversions API
 const sendToConversionsAPI = async (eventData: any) => {
   try {
-    const response = await fetch(`https://graph.facebook.com/v18.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`, {
+    const response = await fetch(`https://graph.facebook.com/v18.0/${META_PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -190,69 +190,10 @@ const sendToConversionsAPI = async (eventData: any) => {
 };
 
 // Store conversion data in your own API for comparison
-const storeConversionData = async (email: string, amount: number, fb_clid?: string) => {
-  try {
-    console.log('📊 Storing conversion data in your API...');
-    
-    // Determine source based on traffic
-    let source = 'direct';
-    if (isFacebookTraffic()) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const utmSource = urlParams.get('utm_source')?.toLowerCase() || '';
-      const utmMedium = urlParams.get('utm_medium')?.toLowerCase() || '';
-      
-      if (utmSource.includes('facebook') || utmMedium.includes('facebook')) {
-        source = 'facebook_ads';
-      } else if (utmSource.includes('instagram') || utmMedium.includes('instagram')) {
-        source = 'instagram_ads';
-      } else {
-        source = 'facebook_ads'; // Default for Facebook traffic
-      }
-    }
-    
-    // Get Facebook click ID from URL or stored UTM params
-    let clickId = fb_clid;
-    if (!clickId) {
-      const urlParams = new URLSearchParams(window.location.search);
-      clickId = urlParams.get('fbclid') || '';
-      
-      if (!clickId) {
-        const storedUTM = getUTMParams();
-        clickId = storedUTM?.fbclid || '';
-      }
-    }
-    
-    const conversionData = {
-      source: source,
-      email: email,
-      amount: amount.toString(),
-      fb_clid: clickId || 'unknown'
-    };
-    
-    console.log('📊 Conversion data to store:', conversionData);
-    
-    const response = await fetch(CONVERSION_STORAGE_API, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(conversionData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ Conversion storage API Error:', response.status, errorText);
-      return false;
-    } else {
-      const result = await response.json();
-      console.log('✅ Conversion stored successfully:', result);
-      return true;
-    }
-  } catch (error) {
-    console.error('❌ Conversion storage API Request Error:', error);
-    return false;
-  }
-};
+// Disabled per request: external backend integration commented out.
+// const storeConversionData = async (email: string, amount: number, fb_clid?: string) => {
+//   return false;
+// };
 
 // Track initiate checkout event
 export const trackInitiateCheckout = async (products: any[], total: number, phoneNumber?: string) => {
@@ -380,9 +321,9 @@ export const trackPurchase = async (
     await sendToConversionsAPI(eventData);
   }
   
-  // Store conversion data in your own API for comparison
-  console.log('📊 Storing conversion data in your API...');
-  await storeConversionData(email, total, clickId);
+  // Store conversion data in your own API for comparison (disabled)
+  // console.log('📊 Storing conversion data in your API...');
+  // await storeConversionData(email, total, clickId);
   
   console.log('✅ Purchase tracking completed');
 }; 

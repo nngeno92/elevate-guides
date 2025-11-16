@@ -20,6 +20,12 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'kenyasolarinstallers.co.ke',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
