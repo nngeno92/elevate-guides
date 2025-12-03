@@ -1,5 +1,5 @@
 // Paystack Configuration
-export const PAYSTACK_PUBLIC_KEY = 'pk_live_fe986a79110fc6403e9dbd4155eead1c44c96245'; // Replace with your actual live public key
+export const PAYSTACK_PUBLIC_KEY = 'pk_live_b7351f3660523ea719c304e53f58be27b32b72ed'; // Replace with your actual live public key
 
 // Payment Configuration
 export const PAYMENT_CONFIG = {
