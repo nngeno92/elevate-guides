@@ -38,5 +38,35 @@
         "review_text": "Finally a bundle that includes both strength and glute-focused guides. Totally worth it!"
       }
     ]
+  },
+  {
+    "product_id": "6002",
+    "product_name": "Shape your body. Grow your Glutes",
+    "short_description": "Structured workouts for glutes, shape & confidence. Includes 12 women-focused training programs you can follow at the gym or at home. Instant download.",
+    "description": "<div class='space-y-6'><h2 class='text-2xl font-bold text-gray-900'>🍑 Shape your body. Grow your Glutes</h2><p class='text-lg text-gray-700'>Structured workouts for glutes, shape & confidence.</p><p class='text-gray-700'>Stop guessing in the gym and start training with purpose. This women-focused bundle includes <strong>12 structured training programs</strong> designed to help you grow your glutes, shape your body, and build confidence — with clear plans you can follow week after week.</p><div class='bg-pink-50 border-l-4 border-pink-400 p-4 my-6'><h3 class='font-semibold text-gray-900 mb-2'>✅ Includes Guides Inspired By:</h3><ul class='list-disc list-inside space-y-1 text-gray-700'><li>Katie Sonier – 6-Week Glute Building Program</li><li>James Ayotte – The Ultimate Bikini Athlete’s Glutes</li><li>Mark Carroll – Your Glute Coach 3</li><li>Women’s Specialisation Program (Glutes, Shoulders & Abs)</li></ul></div><div class='bg-green-50 border-l-4 border-green-400 p-4 my-6'><h3 class='font-semibold text-gray-900 mb-2'>💖 Inside the Bundle (12 Training Programs):</h3><ul class='list-disc list-inside space-y-1 text-gray-700'><li>Step-by-step glute & lower body workouts</li><li>Full-body shaping routines for tone & curves</li><li>Home and gym-friendly variations</li><li>Form and posture guidance for safety</li><li>Progression structure so you know what to do each day</li><li>PDF format — works on phone, tablet or laptop</li></ul></div><div class='bg-yellow-50 border-l-4 border-yellow-400 p-4 my-6'><h3 class='font-semibold text-gray-900 mb-2'>🌸 Why Women Love This Bundle:</h3><ul class='list-disc list-inside space-y-1 text-gray-700'><li>✔ Focused on glute growth & body shaping</li><li>✔ Builds strength without bulky look</li><li>✔ Designed for real Kenyan gym setups</li><li>✔ Easy to follow & motivating</li><li>✔ Instant download & lifetime access</li></ul></div><div class='text-center bg-gray-50 p-6 rounded-lg my-6'><p class='text-lg font-semibold text-gray-900 mb-2'>Train smarter. Feel confident.</p><p class='text-gray-700'>✨ Get your bundle now and start training with a clear plan that works.</p></div></div>",
+    "price": 1500,
+    "sale_price": 299,
+    "product_image": "https://kenyasolarinstallers.co.ke/wp-content/uploads/2026/01/Latest-women-fitness-mockup.png",
+    "wordpress_product_link": "",
+    "google_file_link": "https://drive.google.com/drive/folders/1d_4xDHlgp0EDczZsm2ggLHYZ-kfevTC4?usp=drive_link",
+    "google_download_link": "https://drive.google.com/drive/folders/1d_4xDHlgp0EDczZsm2ggLHYZ-kfevTC4?usp=drive_link",
+    "vsl": "",
+    "reviews": [
+      {
+        "name": "Cynthia Wambui",
+        "stars": 5,
+        "review_text": "Finally a guide that understands women's fitness goals! My glutes have never looked better!"
+      },
+      {
+        "name": "Faith Achieng",
+        "stars": 5,
+        "review_text": "I love that the workouts are realistic for Kenyan gyms. The routines are well structured and easy to follow."
+      },
+      {
+        "name": "Naomi",
+        "stars": 4,
+        "review_text": "Very clear and motivating. The glute workouts are tough but worth it. Please add more abs routines!"
+      }
+    ]
   }
 ]
