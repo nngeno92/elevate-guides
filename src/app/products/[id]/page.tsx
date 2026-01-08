@@ -19,6 +19,7 @@ export default function ProductDetailsPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(19 * 60 + 45); // 19 minutes 45 seconds
   const { addItem, removeItem, getItemQuantity, canAddItem } = useCart();
 
   useEffect(() => {
@@ -38,6 +39,23 @@ export default function ProductDetailsPage() {
 
     return () => clearTimeout(timer);
   }, [productId]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft]);
 
   const handleCartAction = () => {
     if (!product) return;
@@ -154,13 +172,23 @@ export default function ProductDetailsPage() {
 
               {/* Pricing */}
               <div className="mb-6">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4 flex-wrap gap-4">
                   <div className="text-xl text-gray-500 line-through">
                     Ksh. {product.price.toLocaleString()}
                   </div>
                   <div className="text-3xl font-bold text-[#6528F7]">
                     Ksh. {product.sale_price.toLocaleString()}
                   </div>
+                  {/* Countdown Timer */}
+                  {timeLeft > 0 && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <span className="text-red-700 font-medium">Offer ends in: </span>
+                      <span className="text-red-700 font-mono font-bold">
+                        {Math.floor(timeLeft / 60).toString().padStart(2, '0')}:
+                        {(timeLeft % 60).toString().padStart(2, '0')}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
