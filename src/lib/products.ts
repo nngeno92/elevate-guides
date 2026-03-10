@@ -1,8 +1,8 @@
 import { Product } from '@/types';
-import productsData, { products } from '@/data/products';
+import productsData from '@/data/products.json';
 
 export function getProducts(): Product[] {
-  return products as Product[];
+  return productsData as Product[];
 }
 
 export function getProductById(productId: string): Product | undefined {
