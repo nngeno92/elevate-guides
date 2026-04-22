@@ -6,9 +6,7 @@ import Header from '@/components/Header';
 import { CheckCircle, Download, ArrowRight, Loader2 } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { trackPurchase } from '@/lib/analytics';
-import { getProductById } from '@/lib/products';
 // import { updateOrderEmail } from '@/lib/orderManagement';
-import { Product } from '@/types';
 
 export default function PaymentSuccessPage() {
   const router = useRouter();
@@ -34,81 +32,7 @@ export default function PaymentSuccessPage() {
     }
   }, [router]);
 
-  const triggerMakeAutomation = async (email: string, products: Product[], verification: any, phoneNumber: string) => {
-    try {
-      console.log('🚀 Automatically triggering make.com automation for email:', email);
-      
-      // Email delivery API call disabled per request
-      
-      // Business user creation disabled per request
-      
-      // Generate order ID
-      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Create product HTML
-      const productHtml = products.map(product => `
-        <li style="background:#f8f8f8; padding:10px; border-radius:5px; margin-bottom:10px; font-size:16px;">
-          <strong>${product.product_name}</strong><br>
-          <a class="download-link primary" href="${product.google_download_link}" target="_blank">Download</a>
-          <a class="download-link secondary" href="${product.google_file_link}" target="_blank">Backup Download Link</a>
-        </li>
-      `).join('');
-
-      // Create plain text email
-      const productTextEmail = products.map(product => 
-        `Product: ${product.product_name}\nGoogle Drive: ${product.google_download_link}\n`
-      ).join('\n');
-
-      // Get UTM parameters from URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const utmSource = urlParams.get('utm_source') || '';
-      const utmMedium = urlParams.get('utm_medium') || '';
-      const utmCampaign = urlParams.get('utm_campaign') || '';
-      const utmTerm = urlParams.get('utm_term') || '';
-      const utmContent = urlParams.get('utm_content') || '';
-
-      const data = {
-        order_id: orderId,
-        total: products.reduce((sum, product) => sum + product.sale_price, 0),
-        currency: 'KES',
-        customer_email: email,
-        customer_name: 'Customer', // Could be enhanced to collect name
-        product_html: `<ul class="product-list" style="list-style:none; padding:0;">${productHtml}</ul>`,
-        product_text_email: `Hi, incase you did not see the email with the order you made on Business in Kenya, you can find the same links below:\n\n${productTextEmail}`,
-        products: products.map(product => product.product_name),
-        utm: {
-          source: utmSource,
-          medium: utmMedium,
-          campaign: utmCampaign,
-          term: utmTerm,
-          content: utmContent,
-        }
-      };
-
-      const makeWebhookUrl = 'https://hook.eu2.make.com/tnx4xbvprr3unqmp3vgcnng4qa3xpgl6';
-
-      const response = await fetch(makeWebhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      console.log('✅ Make.com automation triggered successfully');
-      
-      // Order update disabled per request
-      
-    } catch (error) {
-      console.error('❌ Make.com automation failed:', error);
-    }
-  };
-
-  // Automatically trigger delivery when payment data is available
+  // Automatically trigger purchase tracking when payment data is available
   useEffect(() => {
     if (!paymentData || deliveryTriggered || !paymentData.email || state.items.length === 0) {
       return;
@@ -133,18 +57,11 @@ export default function PaymentSuccessPage() {
         );
         console.log('✅ Meta conversion tracking completed');
 
-        // Step 2: Trigger delivery automation
-        const products = state.items.map(item => getProductById(item.product_id)).filter(Boolean) as Product[];
-        if (products.length > 0) {
-          await triggerMakeAutomation(paymentData.email, products, paymentData, paymentData.phoneNumber);
-          console.log('✅ Delivery automation completed');
-        }
-
         setIsTracking(false);
       } catch (error) {
-        console.error('❌ Error during automatic delivery:', error);
+        console.error('❌ Error during purchase tracking:', error);
         setIsTracking(false);
-        // Still continue - delivery was attempted
+        // Still continue - tracking was attempted
       }
     };
 
@@ -283,8 +200,8 @@ export default function PaymentSuccessPage() {
             
             <p className="text-sm text-gray-600">
               {isTracking 
-                ? "We're processing your order and sending your products to your email. This will take a few seconds..."
-                : "Your products are being delivered to your email. Click the button above to view your download links."
+                ? "We're processing your order. This will take a few seconds..."
+                : "Click the button above to view your download links."
               }
             </p>
           </div>
