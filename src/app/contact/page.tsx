@@ -23,7 +23,7 @@ export default function ContactPage() {
         <section className="bg-white rounded-xl shadow p-6 space-y-3">
           <h2 className="text-xl font-bold text-gray-900">💬 WhatsApp (Preferred)</h2>
           <p className="text-gray-700">Click to chat instantly:</p>
-          <p className="text-gray-900 font-semibold">+254 724659062</p>
+          <p className="text-gray-900 font-semibold">+254713454123</p>
         </section>
 
         <section className="bg-white rounded-xl shadow p-6 space-y-3">

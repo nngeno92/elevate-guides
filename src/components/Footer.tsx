@@ -5,10 +5,10 @@ export default function Footer() {
         <p className="text-sm">
           Incase of any issues during your order purchase, feel free to call us on{' '}
           <a 
-            href="tel:+254724659062" 
+            href="tel:+254713454123" 
             className="text-blue-400 hover:text-blue-300 underline font-medium"
           >
-            +254 724659062
+            +254713454123
           </a>
         </p>
       </div>
